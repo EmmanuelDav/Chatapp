@@ -24,6 +24,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.rad5.chatapp.Adapters.FragmentaAdapter;
 import com.rad5.chatapp.Fragments.Chat_fragment;
 import com.rad5.chatapp.Fragments.Users_fragment;
+import com.rad5.chatapp.Fragments.profileFragment;
 import com.rad5.chatapp.Models.Users;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -75,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
         FragmentaAdapter pagerAdapter = new FragmentaAdapter(getSupportFragmentManager());
         pagerAdapter.addFragments(new Chat_fragment(),"Users");
         pagerAdapter.addFragments(new Users_fragment(),"Chats");
+        pagerAdapter.addFragments(new profileFragment(),"Profile");
         Pager.setAdapter(pagerAdapter);
 
     }
