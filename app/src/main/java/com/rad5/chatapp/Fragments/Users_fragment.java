@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -88,26 +89,28 @@ public class Users_fragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 mUsers.clear();
-                for (DataSnapshot snapshot: dataSnapshot.getChildren()){
-                    Users users =  snapshot.getValue(Users.class);
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Users users = snapshot.getValue(Users.class);
+                    Log.d("youngerror", users.toString());
 
-                    for (String id : mList){
-                        if (users.getId().equals(id)){
-                            if (mUsers.size() != 0){
-                                for (Users users1 : mUsers){
-                                    if (users.getId().equals(users1.getId())){
-                                        mUsers.add(users);
-                                    }
-                                }
-                            }else {
-                                mUsers.add(users);
-                            }
-                        }
-                    }
+//                    for (String id : mList) {
+//                        if (users.getId().equals(id)) {
+//                            if (mUsers.size() != 0) {
+//                                for (Users users1 : mUsers) {
+//                                    Log.d("olderror", users.toString());
+//                                    if (!users.getId().equals(users1.getId())) {
+//                                        mUsers.add(users);
+//                                    }
+//                                }
+//                            } else {
+//                                mUsers.add(users);
+//                            }
+//                        }
+//                    }
 
 
                 }
-                mUserAdapter = new UserAdapter(mUsers,getContext());
+                mUserAdapter = new UserAdapter(mUsers, getContext());
                 mRecyclerView.setAdapter(mUserAdapter);
             }
 
