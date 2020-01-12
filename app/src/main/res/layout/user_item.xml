@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_margin="10dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -20,5 +21,32 @@
         android:layout_toRightOf="@+id/profile_pix"
         android:text="UserName"
         android:textSize="20sp" />
+
+    <ImageView
+        android:id="@+id/img_on"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_below="@+id/profile_name"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="6dp"
+        android:layout_toStartOf="@+id/profile_name"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
+        android:visibility="invisible"
+        android:background="#16F703" />
+
+    <ImageView
+        android:id="@+id/img_off"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_below="@+id/profile_name"
+        android:layout_marginStart="5dp"
+        android:visibility="invisible"
+        android:layout_marginTop="6dp"
+        android:layout_toStartOf="@+id/profile_name"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
+        android:background="#11423A3A" />
+
 
 </RelativeLayout>

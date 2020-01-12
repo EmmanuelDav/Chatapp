@@ -40,10 +40,7 @@ public class Chat_fragment extends Fragment {
     List<Users> MyUsers;
     FirebaseUser mfirebaseUser;
     DatabaseReference mDatabaseRefrence;
-    //    private FirebaseRecyclerAdapter<Users, UserAdapter> firebaseRecyclerAdapter;
-//    private FirebaseRecyclerOptions<Users> firebaseRecyclerOptions;
     UserAdapter mUserAdapter;
-    ProgressBar mProgressBar;
     public ProgressDialog pDialog;
 
     public Chat_fragment() {
@@ -98,15 +95,18 @@ public class Chat_fragment extends Fragment {
             mDatabaseRefrence.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    MyUsers.clear();
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
                         Users users = snapshot.getValue(Users.class);
                         assert users != null;
                         if (!users.getId().equals(mfirebaseUser.getUid())) {
                             MyUsers.add(users);
+                            Log.d("LogUsers", users.toString());
+
                         }
                     }
-                    mUserAdapter = new UserAdapter(MyUsers, getContext());
+                    mUserAdapter = new UserAdapter(MyUsers, getContext(),true);
                     mRecyclerview.setAdapter(mUserAdapter);
                 }
 

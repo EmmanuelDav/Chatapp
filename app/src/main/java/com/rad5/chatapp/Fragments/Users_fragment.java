@@ -110,7 +110,7 @@ public class Users_fragment extends Fragment {
 
 
                 }
-                mUserAdapter = new UserAdapter(mUsers, getContext());
+                mUserAdapter = new UserAdapter(mUsers, getContext(),false);
                 mRecyclerView.setAdapter(mUserAdapter);
             }
 

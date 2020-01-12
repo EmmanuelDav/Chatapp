@@ -27,6 +27,8 @@ import com.rad5.chatapp.Fragments.Users_fragment;
 import com.rad5.chatapp.Fragments.profileFragment;
 import com.rad5.chatapp.Models.Users;
 
+import java.util.HashMap;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity {
@@ -92,9 +94,30 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()){
             case R.id.Log_out:
                 FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(getApplicationContext(),welcome.class));
-                finish();
+                startActivity(new Intent(getApplicationContext(),welcome.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+
         }
         return false;
+    }
+
+    public void status(String status){
+        mDatabaseref = FirebaseDatabase.getInstance().getReference("Users").child(mUser.getUid());
+        HashMap<String,Object>hashMap = new HashMap<>();
+        hashMap.put("status",status);
+        mDatabaseref.updateChildren(hashMap);
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        status("offline");
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        status("online");
     }
 }

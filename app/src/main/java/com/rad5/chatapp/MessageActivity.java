@@ -70,7 +70,7 @@ public class MessageActivity extends AppCompatActivity {
         bar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
+                startActivity(new Intent(getApplicationContext(),MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
             }
         });
 
@@ -84,7 +84,7 @@ public class MessageActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Users user = dataSnapshot.getValue(Users.class);
                 mTextView.setText(user.getUsername());
-                if (user.getImageUrl().equals("default")) {
+                if (!user.getImageUrl().equals("default")) {
                     Glide.with(getApplicationContext()).load(user.getImageUrl()).into(mImageView);
                 } else {
                     mImageView.setImageResource(R.drawable.ic_action_name);
@@ -155,5 +155,24 @@ public class MessageActivity extends AppCompatActivity {
         });
 
     }
+    public void status(String status){
+        myref = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
+        HashMap<String,Object>hashMap = new HashMap<>();
+        hashMap.put("status",status);
+        myref.updateChildren(hashMap);
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        status("offline");
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        status("online");
+    }
 }

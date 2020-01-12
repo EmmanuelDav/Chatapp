@@ -35,6 +35,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         this.chats = chats;
         this.context = context;
         this.imageurl = imageurl;
+
     }
 
 
@@ -50,6 +51,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             View view = LayoutInflater.from(context).inflate(R.layout.chat_item_left, parent, false);
             return new ViewHolder(view);
         }
+
     }
 
     @Override
@@ -80,7 +82,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             super(itemView);
             show_message = itemView.findViewById(R.id.show_message);
             prof_pix = itemView.findViewById(R.id.profile_image);
-
         }
     }
     @Override
