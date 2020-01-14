@@ -22,7 +22,7 @@
         android:text="UserName"
         android:textSize="20sp" />
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/img_on"
         android:layout_width="15dp"
         android:layout_height="15dp"

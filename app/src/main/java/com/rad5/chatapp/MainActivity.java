@@ -5,12 +5,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.tabs.TabLayout;
@@ -36,12 +38,14 @@ public class MainActivity extends AppCompatActivity {
     TextView userName;
     FirebaseUser mUser;
     DatabaseReference mDatabaseref;
+    private ProgressDialog mDialog;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ProgressDialog();
         profilePic =  findViewById(R.id.User_Image);
         userName = findViewById(R.id.User_name);
         Toolbar toolbarv  = findViewById(R.id.tooBar);
@@ -52,12 +56,13 @@ public class MainActivity extends AppCompatActivity {
         mDatabaseref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                mDialog.dismiss();
                 Users users = dataSnapshot.getValue(Users.class);
                 userName.setText(users.getUsername());
                 Log.d("users",dataSnapshot.getValue().toString());
                 if (users.getImageUrl().equals("default")){
                     profilePic.setImageResource(R.drawable.ic_action_name);
-                }else{
+                }else {
                     Glide.with(getApplicationContext()).
                             load(users.getImageUrl())
                             .into(profilePic);
@@ -68,16 +73,23 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("Database error",databaseError.getMessage());
             }
         });
+
         ViewPager mViewpager = findViewById(R.id.Pager);
         TabLayout layout = findViewById(R.id.tablayout);
         addViewPager(mViewpager);
         layout.setupWithViewPager(mViewpager);
     }
 
+    private void ProgressDialog() {
+        mDialog = new ProgressDialog(MainActivity.this);
+        mDialog.setMessage("Uploading Users");
+        mDialog.show();
+    }
+
     private void addViewPager(ViewPager Pager) {
         FragmentaAdapter pagerAdapter = new FragmentaAdapter(getSupportFragmentManager());
-        pagerAdapter.addFragments(new Chat_fragment(),"Users");
-        pagerAdapter.addFragments(new Users_fragment(),"Chats");
+        pagerAdapter.addFragments(new Chat_fragment(),"Chats");
+        pagerAdapter.addFragments(new Users_fragment(),"Users");
         pagerAdapter.addFragments(new profileFragment(),"Profile");
         Pager.setAdapter(pagerAdapter);
 
@@ -119,5 +131,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         status("online");
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
     }
 }

@@ -128,6 +128,7 @@ public class MessageActivity extends AppCompatActivity {
 
     public void readMessages(final String Myid, final String MUserId, final String mImageUrl) {
         mChats = new ArrayList<>();
+        mChats.clear();
         myref = FirebaseDatabase.getInstance().getReference("Chats");
         myref.addValueEventListener(new ValueEventListener() {
             @Override

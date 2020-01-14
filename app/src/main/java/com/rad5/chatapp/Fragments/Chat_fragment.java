@@ -41,6 +41,7 @@ public class Chat_fragment extends Fragment {
     FirebaseUser mfirebaseUser;
     DatabaseReference mDatabaseRefrence;
     UserAdapter mUserAdapter;
+    ProgressBar mProgressBar;
     public ProgressDialog pDialog;
 
     public Chat_fragment() {
@@ -95,15 +96,12 @@ public class Chat_fragment extends Fragment {
             mDatabaseRefrence.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    MyUsers.clear();
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
                         Users users = snapshot.getValue(Users.class);
                         assert users != null;
                         if (!users.getId().equals(mfirebaseUser.getUid())) {
                             MyUsers.add(users);
-                            Log.d("LogUsers", users.toString());
-
                         }
                     }
                     mUserAdapter = new UserAdapter(MyUsers, getContext(),true);
