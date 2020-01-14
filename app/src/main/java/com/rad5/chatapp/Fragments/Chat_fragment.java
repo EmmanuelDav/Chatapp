@@ -41,7 +41,6 @@ public class Chat_fragment extends Fragment {
     FirebaseUser mfirebaseUser;
     DatabaseReference mDatabaseRefrence;
     UserAdapter mUserAdapter;
-    ProgressBar mProgressBar;
     public ProgressDialog pDialog;
 
     public Chat_fragment() {
