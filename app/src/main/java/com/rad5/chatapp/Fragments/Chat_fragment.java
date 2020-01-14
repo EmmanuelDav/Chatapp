@@ -11,10 +11,13 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -23,6 +26,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.rad5.chatapp.Models.Users;
 import com.rad5.chatapp.R;
@@ -42,6 +46,7 @@ public class Chat_fragment extends Fragment {
     DatabaseReference mDatabaseRefrence;
     UserAdapter mUserAdapter;
     public ProgressDialog pDialog;
+    EditText search;
 
     public Chat_fragment() {
     }
@@ -55,13 +60,56 @@ public class Chat_fragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_chat_fragment, container, false);
         mRecyclerview = view.findViewById(R.id.RecyclerView);
+        search = view.findViewById(R.id.user_search);
         mRecyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
         mDatabaseRefrence = FirebaseDatabase.getInstance().getReference("Users");
         mfirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         MyUsers = new ArrayList<>();
+        search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                searchInput(charSequence.toString());
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
         Asyntaskview Asytask = new Asyntaskview(getActivity());
         Asytask.execute();
         return view;
+    }
+
+    private void searchInput(String s) {
+        mfirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        Query mQuary = FirebaseDatabase.getInstance().getReference("Users").orderByChild("Username")
+                .startAt(s).endAt(s + "\f8ff");
+        mQuary.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot panshot : dataSnapshot.getChildren()) {
+                    MyUsers.clear();
+                    Users users = panshot.getValue(Users.class);
+                    if (!mfirebaseUser.getUid().equals(users.getId())) {
+                        MyUsers.add(users);
+                    }
+                }
+                mUserAdapter = new UserAdapter(MyUsers, getContext(), false);
+                mRecyclerview.setAdapter(mUserAdapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public class Asyntaskview extends AsyncTask<String, String, String> {
@@ -95,16 +143,19 @@ public class Chat_fragment extends Fragment {
             mDatabaseRefrence.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-
-                        Users users = snapshot.getValue(Users.class);
-                        assert users != null;
-                        if (!users.getId().equals(mfirebaseUser.getUid())) {
-                            MyUsers.add(users);
+                    if (search.getText().toString().equals("")) {
+                        MyUsers.clear();
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            Users users = snapshot.getValue(Users.class);
+                            assert users != null;
+                            if (!users.getId().equals(mfirebaseUser.getUid())) {
+                                MyUsers.add(users);
+                            }
                         }
+                        mUserAdapter = new UserAdapter(MyUsers, getContext(), true);
+                        mRecyclerview.setAdapter(mUserAdapter);
+                        mUserAdapter.notifyDataSetChanged();
                     }
-                    mUserAdapter = new UserAdapter(MyUsers, getContext(),true);
-                    mRecyclerview.setAdapter(mUserAdapter);
                 }
 
                 @Override
@@ -119,54 +170,6 @@ public class Chat_fragment extends Fragment {
 
 
     }
-
-//  @Override
-//    public void onStart() {
-//        super.onStart();
-//        firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Users, UserAdapter>(firebaseRecyclerOptions) {
-//            @Override
-//            protected void onBindViewHolder(@NonNull UserAdapter holder, int position, @NonNull final Users model) {
-//                holder.textView.setText(model.getUsername());
-//                if (model.getImageUrl().equals("default")) {
-//                    holder.imageView.setImageResource(R.drawable.ic_action_name);
-//                } else {
-//                    Glide.with(getContext()).load(model.getImageUrl()).into(holder.imageView);
-//                }
-//                mDatabaseRefrence.addValueEventListener(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                        Log.d("displayUser",dataSnapshot.getValue().toString());
-//
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                    }
-//                });
-//
-//                holder.itemView.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View view) {
-//                        Intent intent = new Intent(getContext(), MessageActivity.class);
-//                        intent.putExtra("Userid", model.getId());
-//                        getContext().startActivity(intent);
-//                    }
-//                });
-//
-//            }
-//
-//            @NonNull
-//            @Override
-//            public UserAdapter onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-//                View view = LayoutInflater.from(getContext()).inflate(R.layout.user_item, parent, false);
-//                return new UserAdapter(view);
-//            }
-//        };
-//        mRecyclerview.setAdapter(firebaseRecyclerAdapter);
-//        firebaseRecyclerAdapter.startListening();
-//
-//    }
 
 
 }
