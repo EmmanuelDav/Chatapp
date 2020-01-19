@@ -27,6 +27,14 @@
             android:text="Heavrn is my home"
             android:textSize="17sp" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="seen"
+            android:id="@+id/SeenMessage"
+            android:padding="5dp"
+            android:layout_below="@+id/show_message"
+            android:layout_alignParentEnd="true"/>
 
     </RelativeLayout>
 

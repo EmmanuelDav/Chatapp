@@ -23,5 +23,13 @@
         android:text="heaen"
         android:layout_toEndOf="@+id/profile_image"
         android:textSize="20sp" />
-
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="seen"
+        android:id="@+id/SeenMessage"
+        android:visibility="gone"
+        android:padding="5dp"
+        android:layout_below="@+id/profile_image"
+        android:layout_alignParentStart="true"/>
 </RelativeLayout>
