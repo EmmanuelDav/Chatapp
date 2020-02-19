@@ -48,5 +48,16 @@
         android:layout_marginBottom="5dp"
         android:background="#11423A3A" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/profile_name"
+        android:text="LongLive "
+        android:layout_marginStart="70dp"
+        android:id="@+id/lastMessage"
+        android:textSize="15sp"
+        android:textColor="#16f703"
+        android:padding="5dp"/>
+
 
 </RelativeLayout>
