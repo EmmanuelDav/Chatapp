@@ -55,6 +55,7 @@
         android:text="LongLive "
         android:layout_marginStart="70dp"
         android:id="@+id/lastMessage"
+        android:singleLine="true"
         android:textSize="15sp"
         android:textColor="#16f703"
         android:padding="5dp"/>

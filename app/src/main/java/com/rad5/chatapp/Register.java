@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -29,6 +30,7 @@ public class Register extends AppCompatActivity {
     Button registerButton;
     FirebaseAuth mAuthUser;
     DatabaseReference mDatabase;
+    ProgressBar showprogress;
 
 
     @Override
@@ -43,18 +45,22 @@ public class Register extends AppCompatActivity {
         mUsername = findViewById(R.id.Username);
         mEmail = findViewById(R.id.email);
         mPasswod = findViewById(R.id.password);
+        showprogress = findViewById(R.id.progressBar);
         registerButton = findViewById(R.id.button);
         mAuthUser = FirebaseAuth.getInstance();
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                showDialog();
                 String username = mUsername.getText().toString();
                 String passwod = mPasswod.getText().toString();
                 String email = mEmail.getText().toString();
                 if (TextUtils.isEmpty(username) || TextUtils.isEmpty(passwod) || TextUtils.isEmpty(email)) {
+                    hideDialog();
                     Toast.makeText(Register.this, "fill in the missing field", Toast.LENGTH_LONG).show();
                 } else if (passwod.length() < 6) {
-                    Toast.makeText(Register.this, "Password mut be more that six numbers", Toast.LENGTH_LONG).show();
+                    hideDialog();
+                    Toast.makeText(Register.this, "Password must be up to seven digits", Toast.LENGTH_LONG).show();
 
                 } else{
                         registration(username, passwod, email);
@@ -82,6 +88,7 @@ public class Register extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if(task.isSuccessful()){
+                                        hideDialog();
                                         startActivity(new Intent(Register.this,MainActivity.class));
                                     }
                                 }
@@ -98,6 +105,14 @@ public class Register extends AppCompatActivity {
         });
 
     }
+    private void showDialog(){
+        showprogress.setVisibility(View.VISIBLE);
 
+    }
 
+    private void hideDialog(){
+        if(showprogress.getVisibility() == View.VISIBLE){
+            showprogress.setVisibility(View.INVISIBLE);
+        }
+    }
 }

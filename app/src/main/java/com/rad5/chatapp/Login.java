@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +25,7 @@ public class Login extends AppCompatActivity {
     Button login;
     FirebaseAuth auth;
     TextView mfPassword;
+    ProgressBar mProgressBar;
 
 
     @Override
@@ -33,6 +35,7 @@ public class Login extends AppCompatActivity {
         email = findViewById(R.id.login_email);
         password = findViewById(R.id.Login_password);
         login = findViewById(R.id.Userlogin);
+        mProgressBar = findViewById(R.id.progressBar);
         mfPassword = findViewById(R.id.forgottenPassword);
         auth = FirebaseAuth.getInstance();
 
@@ -40,19 +43,23 @@ public class Login extends AppCompatActivity {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                showDialog();
                 String Email = email.getText().toString();
                 String Password = password.getText().toString();
                 if (TextUtils.isEmpty(Email) || TextUtils.isEmpty(Password)) {
-                    Toast.makeText(getApplicationContext(), "fill in the missing field", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "empty email address or password", Toast.LENGTH_LONG).show();
+                    hideDialog();
                 } else {
                     auth.signInWithEmailAndPassword(Email, Password)
                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
+                                        hideDialog();
                                         startActivity(new Intent(getApplicationContext(), MainActivity.class));
                                         finish();
                                     } else {
+                                        hideDialog();
                                         Toast.makeText(getApplicationContext(), "Login failed", Toast.LENGTH_LONG).show();
 
                                     }
@@ -78,4 +85,15 @@ public class Login extends AppCompatActivity {
 
 
     }
+    private void showDialog(){
+        mProgressBar.setVisibility(View.VISIBLE);
+
+    }
+
+    private void hideDialog(){
+        if(mProgressBar.getVisibility() == View.VISIBLE){
+            mProgressBar.setVisibility(View.INVISIBLE);
+        }
+    }
+
 }
