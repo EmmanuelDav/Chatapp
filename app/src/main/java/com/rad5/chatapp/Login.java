@@ -19,6 +19,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class Login extends AppCompatActivity {
     EditText email, password;
@@ -56,11 +57,18 @@ public class Login extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
                                         hideDialog();
-                                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                                        finish();
+                                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                        if (user.isEmailVerified()) {
+                                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                                            finish();
+                                        }else {
+                                            Toast.makeText(getApplicationContext(), "Please check your email to verify your account", Toast.LENGTH_SHORT).show();
+                                            FirebaseAuth.getInstance().signOut();
+
+                                        }
                                     } else {
                                         hideDialog();
-                                        Toast.makeText(getApplicationContext(), "Login failed", Toast.LENGTH_LONG).show();
+
 
                                     }
 
@@ -85,13 +93,14 @@ public class Login extends AppCompatActivity {
 
 
     }
-    private void showDialog(){
+
+    private void showDialog() {
         mProgressBar.setVisibility(View.VISIBLE);
 
     }
 
-    private void hideDialog(){
-        if(mProgressBar.getVisibility() == View.VISIBLE){
+    private void hideDialog() {
+        if (mProgressBar.getVisibility() == View.VISIBLE) {
             mProgressBar.setVisibility(View.INVISIBLE);
         }
     }

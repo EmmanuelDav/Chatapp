@@ -62,56 +62,84 @@ public class Register extends AppCompatActivity {
                     hideDialog();
                     Toast.makeText(Register.this, "Password must be up to seven digits", Toast.LENGTH_LONG).show();
 
-                } else{
-                        registration(username, passwod, email);
-                    }
+                } else {
+                    registration(username, passwod, email);
                 }
+            }
 
 
         });
     }
 
+    public void confirmEmailAddress() {
+        FirebaseUser User = FirebaseAuth.getInstance().getCurrentUser();
+        if (User != null) {
+            User.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(getApplicationContext(), "Verification email sent", Toast.LENGTH_LONG).show();
+
+                    } else {
+                        Toast.makeText(getApplicationContext(), "error occurred while  sending email", Toast.LENGTH_LONG).show();
+
+                    }
+
+                }
+
+            });
+            startActivity(new Intent(getApplicationContext(), Login.class));
+            finish();
+        }
+    }
+
     private void registration(final String Username, String Pssword, String email) {
-        mAuthUser.createUserWithEmailAndPassword(email,Pssword)
+        mAuthUser.createUserWithEmailAndPassword(email, Pssword)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()){
+                        if (task.isSuccessful()) {
                             FirebaseUser mUser = mAuthUser.getCurrentUser();
-                            String Userid =mUser.getUid();
+
+                            String Userid = mUser.getUid();
                             mDatabase = FirebaseDatabase.getInstance().getReference("Users").child(Userid);
-                            HashMap<String,String> hashMap = new HashMap<>();
-                            hashMap.put("id",Userid);
+                            HashMap<String, String> hashMap = new HashMap<>();
+                            hashMap.put("id", Userid);
                             hashMap.put("Username", Username);
-                            hashMap.put("ImageUrl","default");
+                            hashMap.put("ImageUrl", "default");
                             mDatabase.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
-                                    if(task.isSuccessful()){
+                                    if (task.isSuccessful()) {
                                         hideDialog();
-                                        startActivity(new Intent(Register.this,MainActivity.class));
+                                        confirmEmailAddress();
+                                       // startActivity(new Intent(Register.this, MainActivity.class));
                                     }
                                 }
                             });
+                        } else {
+                            hideDialog();
+
                         }
 
                     }
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Log.d("login error",e.getMessage());
+                Log.d("login error", e.getMessage());
 
             }
         });
 
     }
-    private void showDialog(){
+
+    private void showDialog() {
         showprogress.setVisibility(View.VISIBLE);
 
     }
 
-    private void hideDialog(){
-        if(showprogress.getVisibility() == View.VISIBLE){
+    private void hideDialog() {
+        if (showprogress.getVisibility() == View.VISIBLE) {
             showprogress.setVisibility(View.INVISIBLE);
         }
     }

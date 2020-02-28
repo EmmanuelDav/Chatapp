@@ -22,6 +22,9 @@ public class welcome extends AppCompatActivity {
         if (user!= null){
             startActivity(new Intent(welcome.this,MainActivity.class));
             finish();
+        }else {
+
+
         }
     }
 

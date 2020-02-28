@@ -46,7 +46,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:ems="10"
-        android:hint="Enter A Strong Password"
+        android:hint="Enter Password"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="@+id/email"
         app:layout_constraintStart_toStartOf="@+id/email"
