@@ -40,7 +40,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class Chat_fragment extends Fragment {
+public class fragment_Users extends Fragment {
 
     List<Users> MyUsers;
     FirebaseUser mfirebaseUser;
@@ -49,7 +49,7 @@ public class Chat_fragment extends Fragment {
     public ProgressDialog pDialog;
     EditText search;
 
-    public Chat_fragment() {
+    public fragment_Users() {
     }
 
     RecyclerView mRecyclerview;

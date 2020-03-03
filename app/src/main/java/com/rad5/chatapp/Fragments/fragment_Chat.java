@@ -21,6 +21,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.rad5.chatapp.Adapters.UserAdapter;
+import com.rad5.chatapp.Models.Chatlist;
 import com.rad5.chatapp.Models.Chats;
 import com.rad5.chatapp.Models.Users;
 import com.rad5.chatapp.R;
@@ -32,14 +33,14 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class Users_fragment extends Fragment {
+public class fragment_Chat extends Fragment {
 
     private RecyclerView mRecyclerView;
 
     private List<Users> mUsers;
     FirebaseUser mFirebaseUser;
-    private List<String> mList;
-    private DatabaseReference mDatabase;
+    private List<Chatlist> mList;
+    private DatabaseReference mReference;
     private UserAdapter mUserAdapter;
 
 
@@ -55,23 +56,18 @@ public class Users_fragment extends Fragment {
 
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         mList = new ArrayList<>();
-
-        mDatabase = FirebaseDatabase.getInstance().getReference("Chats");
-        mDatabase.addValueEventListener(new ValueEventListener() {
+        mReference = FirebaseDatabase.getInstance().getReference("Chatlist").child(mFirebaseUser.getUid());
+        mReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 mList.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Chats chats = snapshot.getValue(Chats.class);
-                    if (chats.getSender().equals(mFirebaseUser.getUid())) {
-                        mList.add(chats.getReceiver());
-                    }
-                    if (chats.getReceiver().equals(mFirebaseUser.getUid())) {
-                        mList.add(chats.getSender());
-                    }
-                }
-                readmessagese();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Chatlist mchatlist =  snapshot.getValue(Chatlist.class);
+                    mList.add(mchatlist);
 
+                }
+
+                chatlist();
             }
 
             @Override
@@ -79,39 +75,30 @@ public class Users_fragment extends Fragment {
 
             }
         });
-        return v;
+
+       return v;
     }
 
-    private void readmessagese() {
+    private void chatlist() {
         mUsers = new ArrayList<>();
-        mDatabase = FirebaseDatabase.getInstance().getReference("Users");
-        mDatabase.addValueEventListener(new ValueEventListener() {
+        mReference = FirebaseDatabase.getInstance().getReference("Users");
+        mReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 mUsers.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                     Users users = snapshot.getValue(Users.class);
-                    Log.d("youngerror", users.toString());
+                    for (Chatlist chatlist : mList){
+                        if (users.getId().equals(chatlist.getId())){
+                            mUsers.add(users);
 
-//                    for (String id : mList) {
-//                        if (users.getId().equals(id)) {
-//                            if (mUsers.size() != 0) {
-//                                for (Users users1 : mUsers) {
-//                                    Log.d("olderror", users.toString());
-//                                    if (!users.getId().equals(users1.getId())) {
-//                                        mUsers.add(users);
-//                                    }
-//                                }
-//                            } else {
-//                                mUsers.add(users);
-//                            }
-//                        }
-//                    }
-
+                        }
+                    }
 
                 }
-                mUserAdapter = new UserAdapter(mUsers, getContext(),false);
+                mUserAdapter = new UserAdapter(mUsers,getContext(),true);
                 mRecyclerView.setAdapter(mUserAdapter);
+
             }
 
             @Override
@@ -121,5 +108,6 @@ public class Users_fragment extends Fragment {
         });
 
     }
+
 
 }

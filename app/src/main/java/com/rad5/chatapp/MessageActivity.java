@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.renderscript.Script;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -45,6 +46,7 @@ public class MessageActivity extends AppCompatActivity {
     FirebaseUser fuser;
     RecyclerView mRecyclerview;
     ValueEventListener isSeenListener;
+    private String mUserId;
 
 
     @Override
@@ -77,9 +79,9 @@ public class MessageActivity extends AppCompatActivity {
 
 
         intent = getIntent();
-        final String userId = intent.getStringExtra("user_id");
+        mUserId = intent.getStringExtra("user_id");
         fuser = FirebaseAuth.getInstance().getCurrentUser();
-        myref = FirebaseDatabase.getInstance().getReference("Users").child(userId);
+        myref = FirebaseDatabase.getInstance().getReference("Users").child(mUserId);
         myref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -90,7 +92,7 @@ public class MessageActivity extends AppCompatActivity {
                 } else {
                     mImageView.setImageResource(R.drawable.ic_action_name);
                 }
-                readMessages(fuser.getUid(), userId, user.getImageUrl());
+                readMessages(fuser.getUid(), mUserId, user.getImageUrl());
             }
 
             @Override
@@ -106,14 +108,14 @@ public class MessageActivity extends AppCompatActivity {
                 if (sms.isEmpty()) {
                     Toast.makeText(getApplicationContext(), "no message to send", Toast.LENGTH_LONG).show();
                 } else {
-                    sendmessage(fuser.getUid(), userId, sms);
+                    sendmessage(fuser.getUid(), mUserId, sms);
                 }
                 editText.setText("");
 
             }
         });
 
-      MessageSeen(userId);
+      MessageSeen(mUserId);
 
     }
 
@@ -149,6 +151,24 @@ public class MessageActivity extends AppCompatActivity {
         hashMap.put("message", message);
         hashMap.put("isSeen", false);
         reference.child("Chats").push().setValue(hashMap);
+
+        final DatabaseReference mchatRef = FirebaseDatabase.getInstance().getReference("Chatlist")
+                .child(fuser.getUid())
+                .child(mUserId);
+
+        mchatRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.exists()){
+                    mchatRef.child("id").setValue(mUserId);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
     }
 

@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.tabs.TabLayout;
@@ -24,8 +23,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.rad5.chatapp.Adapters.FragmentaAdapter;
-import com.rad5.chatapp.Fragments.Chat_fragment;
-import com.rad5.chatapp.Fragments.Users_fragment;
+import com.rad5.chatapp.Fragments.fragment_Users;
+import com.rad5.chatapp.Fragments.fragment_Chat;
 import com.rad5.chatapp.Fragments.profileFragment;
 import com.rad5.chatapp.Models.Users;
 
@@ -88,8 +87,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void addViewPager(ViewPager Pager) {
         FragmentaAdapter pagerAdapter = new FragmentaAdapter(getSupportFragmentManager());
-        pagerAdapter.addFragments(new Chat_fragment(),"Chats");
-        pagerAdapter.addFragments(new Users_fragment(),"Users");
+        pagerAdapter.addFragments(new fragment_Chat(),"Chat");
+        pagerAdapter.addFragments(new fragment_Users(),"Users");
         pagerAdapter.addFragments(new profileFragment(),"Profile");
         Pager.setAdapter(pagerAdapter);
 
