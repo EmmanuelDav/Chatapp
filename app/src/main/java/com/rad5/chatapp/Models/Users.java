@@ -5,14 +5,41 @@ public class Users {
     private String Username;
     private String ImageUrl;
     private String status;
+    private String UserToken;
 
-    private Users(){}
+    private Users() {
+    }
 
-    public Users(String id, String username, String imageUrl,String status) {
+    public Users(String id, String username, String imageUrl, String status, String userToken) {
         this.id = id;
         Username = username;
         ImageUrl = imageUrl;
         this.status = status;
+        UserToken = userToken;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return Username;
+    }
+
+    public void setUsername(String username) {
+        Username = username;
+    }
+
+    public String getImageUrl() {
+        return ImageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        ImageUrl = imageUrl;
     }
 
     public String getStatus() {
@@ -23,27 +50,11 @@ public class Users {
         this.status = status;
     }
 
-    public String getId() {
-        return id;
+    public String getUserToken() {
+        return UserToken;
     }
 
-    public String getUsername() {
-        return Username;
-    }
-
-    public String getImageUrl() {
-        return ImageUrl;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public void setUsername(String username) {
-        Username = username;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        ImageUrl = imageUrl;
+    public void setUserToken(String userToken) {
+        UserToken = userToken;
     }
 }

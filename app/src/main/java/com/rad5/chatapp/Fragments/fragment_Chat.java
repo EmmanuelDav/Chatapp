@@ -13,6 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -20,13 +22,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.rad5.chatapp.Adapters.UserAdapter;
 import com.rad5.chatapp.Models.Chatlist;
-import com.rad5.chatapp.Models.Chats;
 import com.rad5.chatapp.Models.Users;
 import com.rad5.chatapp.R;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -40,6 +44,7 @@ public class fragment_Chat extends Fragment {
     private List<Users> mUsers;
     FirebaseUser mFirebaseUser;
     private List<Chatlist> mList;
+    private static final String TAG = "fragmentActivity";
     private DatabaseReference mReference;
     private UserAdapter mUserAdapter;
 
@@ -75,10 +80,30 @@ public class fragment_Chat extends Fragment {
 
             }
         });
+        sendTokenToFirebase();
 
-       return v;
+        return v;
     }
 
+
+
+    private void sendTokenToFirebase() {
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        final DatabaseReference refrence = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
+        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+            @Override
+            public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                if (task.isSuccessful()) {
+                   String token = task.getResult().getToken();
+                    HashMap<String, Object> hashMap = new HashMap<>();
+                    hashMap.put("UserToken", token);
+                    refrence.updateChildren(hashMap);
+                }else {
+                    Log.d(TAG,"tokenError" + task.getException());
+                }
+            }
+        });
+    }
     private void chatlist() {
         mUsers = new ArrayList<>();
         mReference = FirebaseDatabase.getInstance().getReference("Users");
