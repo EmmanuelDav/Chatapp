@@ -24,6 +24,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.rad5.chatapp.Adapters.UserAdapter;
 import com.rad5.chatapp.FCM.Data;
 import com.rad5.chatapp.FCM.FCM;
 import com.rad5.chatapp.FCM.FirebaseMessage;
@@ -38,12 +39,15 @@ import java.util.List;
 import java.util.Set;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.Body;
 
 public class MessageActivity extends AppCompatActivity {
     ImageButton imageButton;
@@ -55,19 +59,22 @@ public class MessageActivity extends AppCompatActivity {
     MessageAdapter chatAdapter;
     List<Chats> mChats;
     FirebaseUser fuser;
+    public static Boolean isActivityRunning;
     RecyclerView mRecyclerview;
     ValueEventListener isSeenListener;
     private String mUserId;
     public Set<String> mToken;
-    public  String mServerkey;
+    public String mServerkey;
     public static final String TAG = "MessageActivity";
     public static final String baseUrl = "https://fcm.googleapis.com/fcm/";
+    private String mLastmessages;
+    private String username;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(TAG,"onCreate");
+        Log.d(TAG, "onCreate");
         setContentView(R.layout.activity_message);
         mTextView = findViewById(R.id.User_names);
         mImageView = findViewById(R.id.User_Images);
@@ -75,7 +82,6 @@ public class MessageActivity extends AppCompatActivity {
         editText = findViewById(R.id.chat_text);
         Toolbar bar = findViewById(R.id.tooBarl);
         mToken = new HashSet<>();
-
 
 
         setSupportActionBar(bar);
@@ -128,7 +134,9 @@ public class MessageActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "no message to send", Toast.LENGTH_LONG).show();
                 } else {
                     sendmessage(fuser.getUid(), mUserId, sms);
-                    sendNotifictionmessagetoUser(sms, mUserId);
+                    sendNotifictionmessagetoUser(sms, username);
+
+
                 }
                 editText.setText("");
 
@@ -137,18 +145,36 @@ public class MessageActivity extends AppCompatActivity {
         getServerKey();
         getToken();
 
-
+        getUsernmae();
         MessageSeen(mUserId);
-       Log.d(TAG,"Tokenkey" +  mServerkey);
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        isActivityRunning = true;
+        getUsernmae();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        isActivityRunning = false;
+    }
 
     public void sendNotifictionmessagetoUser(String mms, String id) {
         Log.d(TAG, "creating retrofit for notification_message");
+        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
+        httpClient.addInterceptor(loggingInterceptor);
+
         Retrofit mRetrofit = new Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .addConverterFactory(GsonConverterFactory.create())
+                .client(httpClient.build())
                 .build();
 
         FCM fcmApi = mRetrofit.create(FCM.class);
@@ -158,24 +184,18 @@ public class MessageActivity extends AppCompatActivity {
 
         for (String token : mToken) {
             Data data = new Data();
-
             data.setMessage(mms);
             data.setuserID(id);
             FirebaseMessage firebaseMessage = new FirebaseMessage();
             firebaseMessage.setData(data);
             firebaseMessage.setTo(token);
-            Log.d("D/F",data.getMessage());
-            Log.d("D/F",data.userID());
-            Log.d("D/F",firebaseMessage.getData().userID());
-            Log.d("D/F",firebaseMessage.getData().getMessage());
-            Log.d("D/F"   ,firebaseMessage.getTo());
-
-
+            Log.d(TAG, "D/F  " + firebaseMessage.getData().toString());
+            Log.d(TAG, "D/F  " + data.getMessage());
             Call<ResponseBody> call = fcmApi.send(header, firebaseMessage);
             call.enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    Log.d(TAG, "response_Success   " + response.raw());
+                    Log.d(TAG, "D/F response_Successful   " + response.message());
                 }
 
                 @Override
@@ -191,6 +211,24 @@ public class MessageActivity extends AppCompatActivity {
 
     }
 
+    public void getUsernmae() {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Users users = dataSnapshot.getValue(Users.class);
+                username = users.getUsername();
+                Log.d(TAG, "userName " + username);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
     public void getServerKey() {
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
@@ -199,12 +237,10 @@ public class MessageActivity extends AppCompatActivity {
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-               DataSnapshot snapshot = dataSnapshot.getChildren().iterator().next();
-                  mServerkey = snapshot.getValue().toString();
+                DataSnapshot snapshot = dataSnapshot.getChildren().iterator().next();
+                mServerkey = snapshot.getValue().toString();
 
-                Log.d(TAG,"mServerKey   =" +  mServerkey);
-
-
+                Log.d(TAG, "mServerKey   =" + mServerkey);
 
 
             }
@@ -224,7 +260,7 @@ public class MessageActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String token = dataSnapshot.getValue(String.class);
                 mToken.add(token);
-                Log.d(TAG,"mTokenKey =" +  mToken);
+                Log.d(TAG, "mTokenKey =" + mToken);
             }
 
             @Override
@@ -286,6 +322,7 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
 
+
     }
 
 
@@ -341,4 +378,5 @@ public class MessageActivity extends AppCompatActivity {
         super.onResume();
         status("online");
     }
+
 }

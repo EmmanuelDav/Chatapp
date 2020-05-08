@@ -31,6 +31,7 @@ public class Register extends AppCompatActivity {
     FirebaseAuth mAuthUser;
     DatabaseReference mDatabase;
     ProgressBar showprogress;
+    public static boolean isActivityRunning;
 
 
     @Override
@@ -113,7 +114,7 @@ public class Register extends AppCompatActivity {
                                     if (task.isSuccessful()) {
                                         hideDialog();
                                         confirmEmailAddress();
-                                       // startActivity(new Intent(Register.this, MainActivity.class));
+                                        // startActivity(new Intent(Register.this, MainActivity.class));
                                     }
                                 }
                             });
@@ -142,5 +143,17 @@ public class Register extends AppCompatActivity {
         if (showprogress.getVisibility() == View.VISIBLE) {
             showprogress.setVisibility(View.INVISIBLE);
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        isActivityRunning = true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        isActivityRunning = false;
     }
 }

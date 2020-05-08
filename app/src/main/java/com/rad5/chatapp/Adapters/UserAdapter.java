@@ -114,7 +114,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.Viewholder> {
         }
     }
 
-    private void lastMessage(final String UserId, final TextView LAstMessages) {
+    public void lastMessage(final String UserId, final TextView LAstMessages) {
         theLastmessages = "default";
         final FirebaseUser mfirebaseuser = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference mdataRef = FirebaseDatabase.getInstance().getReference("Chats");

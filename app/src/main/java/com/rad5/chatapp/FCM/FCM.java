@@ -14,5 +14,7 @@ public interface FCM {
 
     @POST("send")
     Call<ResponseBody>send(
-            @HeaderMap Map<String,String> headers,@Body FirebaseMessage message);
+            @HeaderMap Map<String,String> header,
+            @Body FirebaseMessage message
+    );
 }

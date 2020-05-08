@@ -1,14 +1,12 @@
 package com.rad5.chatapp.FCM;
 
-import androidx.annotation.NonNull;
-
 public class FirebaseMessage {
     public String to;
-    public Data mData;
+    public Data data;
 
     public FirebaseMessage(String to, Data data) {
         this.to = to;
-        mData = data;
+        this.data = data;
     }
 
     public  FirebaseMessage(){}
@@ -22,18 +20,18 @@ public class FirebaseMessage {
     }
 
     public Data getData() {
-        return mData;
+        return data;
     }
 
     public void setData(Data data) {
-        mData = data;
+        this.data = data;
     }
 
     @Override
     public String toString() {
         return "FirebaseMessage{" +
                 "to='" + to + '\'' +
-                ", mData=" + mData +
+                ", data=" + data +
                 '}';
     }
 }

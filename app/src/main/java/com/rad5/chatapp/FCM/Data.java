@@ -1,14 +1,12 @@
 package com.rad5.chatapp.FCM;
 
-import androidx.annotation.NonNull;
-
 public class Data {
     public String message;
-    public String Useriid;
+    public String sendersName;
 
     public Data(String message, String useriid) {
         this.message = message;
-        Useriid = useriid;
+        sendersName = useriid;
     }
 
     public Data() {
@@ -24,18 +22,18 @@ public class Data {
     }
 
     public String userID() {
-        return Useriid;
+        return sendersName;
     }
 
     public void setuserID(String useriid) {
-        Useriid = useriid;
+        sendersName = useriid;
     }
 
     @Override
     public String toString() {
         return "data{" +
                 "message='" + message + '\'' +
-                ", userid='" + Useriid + '\'' +
+                ", userid='" + sendersName + '\'' +
                 '}';
     }
 }

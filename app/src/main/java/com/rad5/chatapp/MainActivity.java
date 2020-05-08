@@ -35,6 +35,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class MainActivity extends AppCompatActivity {
     CircleImageView profilePic;
     TextView userName;
+    public static Boolean isActivityRunning;
     FirebaseUser mUser;
     DatabaseReference mDatabaseref;
     private ProgressDialog mDialog;
@@ -45,9 +46,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ProgressDialog();
-        profilePic =  findViewById(R.id.User_Image);
+        profilePic = findViewById(R.id.User_Image);
         userName = findViewById(R.id.User_name);
-        Toolbar toolbarv  = findViewById(R.id.tooBar);
+        Toolbar toolbarv = findViewById(R.id.tooBar);
         setSupportActionBar(toolbarv);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         mUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -58,18 +59,19 @@ public class MainActivity extends AppCompatActivity {
                 mDialog.dismiss();
                 Users users = dataSnapshot.getValue(Users.class);
                 userName.setText(users.getUsername());
-                Log.d("users",dataSnapshot.getValue().toString());
-                if (users.getImageUrl().equals("default")){
+                Log.d("users", dataSnapshot.getValue().toString());
+                if (users.getImageUrl().equals("default")) {
                     profilePic.setImageResource(R.drawable.ic_action_name);
-                }else {
+                } else {
                     Glide.with(getApplicationContext()).
                             load(users.getImageUrl())
                             .into(profilePic);
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d("Database error",databaseError.getMessage());
+                Log.d("Database error", databaseError.getMessage());
             }
         });
 
@@ -87,34 +89,34 @@ public class MainActivity extends AppCompatActivity {
 
     private void addViewPager(ViewPager Pager) {
         FragmentaAdapter pagerAdapter = new FragmentaAdapter(getSupportFragmentManager());
-        pagerAdapter.addFragments(new fragment_Chat(),"Chat");
-        pagerAdapter.addFragments(new fragment_Users(),"Users");
-        pagerAdapter.addFragments(new profileFragment(),"Profile");
+        pagerAdapter.addFragments(new fragment_Chat(), "Chat");
+        pagerAdapter.addFragments(new fragment_Users(), "Users");
+        pagerAdapter.addFragments(new profileFragment(), "Profile");
         Pager.setAdapter(pagerAdapter);
 
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.value,menu);
+        getMenuInflater().inflate(R.menu.value, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.Log_out:
                 FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(getApplicationContext(),welcome.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                startActivity(new Intent(getApplicationContext(), welcome.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
 
         }
         return false;
     }
 
-    public void status(String status){
+    public void status(String status) {
         mDatabaseref = FirebaseDatabase.getInstance().getReference("Users").child(mUser.getUid());
-        HashMap<String,Object>hashMap = new HashMap<>();
-        hashMap.put("status",status);
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("status", status);
         mDatabaseref.updateChildren(hashMap);
 
     }
@@ -135,5 +137,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        isActivityRunning = true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        isActivityRunning = false;
     }
 }

@@ -14,6 +14,7 @@ import com.google.firebase.database.FirebaseDatabase;
 public class welcome extends AppCompatActivity {
     Button login,register;
     FirebaseUser user;
+    public static boolean isActivityRunning;
 
     @Override
     protected void onStart() {
@@ -26,6 +27,7 @@ public class welcome extends AppCompatActivity {
 
 
         }
+        isActivityRunning = true;
     }
 
     @Override
@@ -48,5 +50,11 @@ public class welcome extends AppCompatActivity {
                 startActivity(new Intent(welcome.this,Register.class));
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        isActivityRunning = false;
     }
 }
