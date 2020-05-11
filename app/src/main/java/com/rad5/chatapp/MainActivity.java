@@ -26,6 +26,7 @@ import com.rad5.chatapp.Adapters.FragmentaAdapter;
 import com.rad5.chatapp.Fragments.fragment_Users;
 import com.rad5.chatapp.Fragments.fragment_Chat;
 import com.rad5.chatapp.Fragments.profileFragment;
+import com.rad5.chatapp.Models.Chats;
 import com.rad5.chatapp.Models.Users;
 
 import java.util.HashMap;
@@ -45,9 +46,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ProgressDialog();
-        profilePic =  findViewById(R.id.User_Image);
+        profilePic = findViewById(R.id.User_Image);
         userName = findViewById(R.id.User_name);
-        Toolbar toolbarv  = findViewById(R.id.tooBar);
+        Toolbar toolbarv = findViewById(R.id.tooBar);
         setSupportActionBar(toolbarv);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         mUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -58,25 +59,58 @@ public class MainActivity extends AppCompatActivity {
                 mDialog.dismiss();
                 Users users = dataSnapshot.getValue(Users.class);
                 userName.setText(users.getUsername());
-                Log.d("users",dataSnapshot.getValue().toString());
-                if (users.getImageUrl().equals("default")){
+                Log.d("users", dataSnapshot.getValue().toString());
+                if (users.getImageUrl().equals("default")) {
                     profilePic.setImageResource(R.drawable.ic_action_name);
-                }else {
+                } else {
                     Glide.with(getApplicationContext()).
                             load(users.getImageUrl())
                             .into(profilePic);
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d("Database error",databaseError.getMessage());
+                Log.d("Database error", databaseError.getMessage());
             }
         });
 
-        ViewPager mViewpager = findViewById(R.id.Pager);
-        TabLayout layout = findViewById(R.id.tablayout);
-        addViewPager(mViewpager);
-        layout.setupWithViewPager(mViewpager);
+        final ViewPager mViewpager = findViewById(R.id.Pager);
+
+        mDatabaseref = FirebaseDatabase.getInstance().getReference("Chats");
+        mDatabaseref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                FragmentaAdapter pagerAdapter = new FragmentaAdapter(getSupportFragmentManager());
+                int unread = 0;
+                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                    Chats chat = dataSnapshot1.getValue(Chats.class);
+                    if (chat.getReceiver().equals(mUser.getUid()) && !chat.isisSeen()) {
+                        unread++;
+                    }
+                }
+
+                if (unread == 0) {
+                    pagerAdapter.addFragments(new fragment_Chat(), "Chat");
+                } else {
+                    pagerAdapter.addFragments(new fragment_Chat(), "(" + unread + ")" + "Chat");
+                }
+
+
+                pagerAdapter.addFragments(new fragment_Users(), "Users");
+                pagerAdapter.addFragments(new profileFragment(), "Profile");
+                mViewpager.setAdapter(pagerAdapter);
+
+                TabLayout layout = findViewById(R.id.tablayout);
+                layout.setupWithViewPager(mViewpager);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void ProgressDialog() {
@@ -85,36 +119,28 @@ public class MainActivity extends AppCompatActivity {
         mDialog.show();
     }
 
-    private void addViewPager(ViewPager Pager) {
-        FragmentaAdapter pagerAdapter = new FragmentaAdapter(getSupportFragmentManager());
-        pagerAdapter.addFragments(new fragment_Chat(),"Chat");
-        pagerAdapter.addFragments(new fragment_Users(),"Users");
-        pagerAdapter.addFragments(new profileFragment(),"Profile");
-        Pager.setAdapter(pagerAdapter);
-
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.value,menu);
+        getMenuInflater().inflate(R.menu.value, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.Log_out:
                 FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(getApplicationContext(),welcome.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                startActivity(new Intent(getApplicationContext(), welcome.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
 
         }
         return false;
     }
 
-    public void status(String status){
+    public void status(String status) {
         mDatabaseref = FirebaseDatabase.getInstance().getReference("Users").child(mUser.getUid());
-        HashMap<String,Object>hashMap = new HashMap<>();
-        hashMap.put("status",status);
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("status", status);
         mDatabaseref.updateChildren(hashMap);
 
     }

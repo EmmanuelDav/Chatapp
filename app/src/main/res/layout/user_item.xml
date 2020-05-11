@@ -24,7 +24,7 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/img_on"
-        android:layout_width="15dp"
+        android:layout_width="10dp"
         android:layout_height="15dp"
         android:layout_below="@+id/profile_name"
         android:layout_marginStart="5dp"
@@ -52,7 +52,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/profile_name"
-        android:text="LongLive "
+        android:text=" "
         android:layout_marginStart="70dp"
         android:id="@+id/lastMessage"
         android:singleLine="true"
