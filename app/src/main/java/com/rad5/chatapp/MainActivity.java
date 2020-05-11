@@ -36,6 +36,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class MainActivity extends AppCompatActivity {
     CircleImageView profilePic;
     TextView userName;
+    public static Boolean isActivityRunning;
     FirebaseUser mUser;
     DatabaseReference mDatabaseref;
     private ProgressDialog mDialog;
@@ -119,6 +120,14 @@ public class MainActivity extends AppCompatActivity {
         mDialog.show();
     }
 
+    private void addViewPager(ViewPager Pager) {
+        FragmentaAdapter pagerAdapter = new FragmentaAdapter(getSupportFragmentManager());
+        pagerAdapter.addFragments(new fragment_Chat(), "Chat");
+        pagerAdapter.addFragments(new fragment_Users(), "Users");
+        pagerAdapter.addFragments(new profileFragment(), "Profile");
+        Pager.setAdapter(pagerAdapter);
+
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -161,5 +170,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        isActivityRunning = true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        isActivityRunning = false;
     }
 }

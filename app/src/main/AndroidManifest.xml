@@ -20,13 +20,25 @@
         <activity android:name=".MainActivity" />
 
         <activity android:name=".welcome">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service android:name=".Notification.FirebaseMessageService"
+            android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+
+
+            </intent-filter>
+        </service>
+
+
+
     </application>
 
 </manifest>

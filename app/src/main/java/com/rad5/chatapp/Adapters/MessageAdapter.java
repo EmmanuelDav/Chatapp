@@ -58,7 +58,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     public void onBindViewHolder(@NonNull MessageAdapter.ViewHolder holder, int position) {
         Chats mchat = chats.get(position);
         holder.show_message.setText(mchat.getMessage());
-        Log.d("usermessage",mchat.getMessage());
+       // Log.d("usermessage",mchat.getMessage());
         if (imageurl.equals("default")){
             holder.prof_pix.setImageResource(R.drawable.ic_action_name);
         }else {

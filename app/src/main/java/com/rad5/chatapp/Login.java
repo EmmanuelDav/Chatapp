@@ -27,6 +27,7 @@ public class Login extends AppCompatActivity {
     FirebaseAuth auth;
     TextView mfPassword;
     ProgressBar mProgressBar;
+    public static boolean isActivityRunning;
 
 
     @Override
@@ -103,6 +104,17 @@ public class Login extends AppCompatActivity {
         if (mProgressBar.getVisibility() == View.VISIBLE) {
             mProgressBar.setVisibility(View.INVISIBLE);
         }
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        isActivityRunning = true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        isActivityRunning = false;
     }
 
 }

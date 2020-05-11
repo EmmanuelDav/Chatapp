@@ -35,6 +35,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.Viewholder> {
     Context mContext;
     private Boolean ischat;
     String theLastmessages;
+    public static final String TAG = "lastchat";
 
     public UserAdapter(List<Users> users, Context context, Boolean ischat) {
         mUsers = users;
@@ -113,7 +114,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.Viewholder> {
         }
     }
 
-    private void lastMessage(final String UserId, final TextView LAstMessages) {
+    public void lastMessage(final String UserId, final TextView LAstMessages) {
         theLastmessages = "default";
         final FirebaseUser mfirebaseuser = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference mdataRef = FirebaseDatabase.getInstance().getReference("Chats");
@@ -126,7 +127,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.Viewholder> {
                             mchat.getReceiver().equals(UserId) && mchat.getSender().equals(mfirebaseuser.getUid())) {
 
                         theLastmessages = mchat.getMessage();
-                        Log.d("lastmessage",mchat.getMessage());
+                        //Log.d(TAG,"lastmessage = " + mchat.getMessage());
                     }
                 }
                 switch (theLastmessages) {
