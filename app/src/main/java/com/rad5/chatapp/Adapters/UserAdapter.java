@@ -132,7 +132,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.Viewholder> {
                 }
                 switch (theLastmessages) {
                     case "default":
-                        LAstMessages.setText("No Message");
+                        LAstMessages.setText(" ");
                         break;
 
                     default:

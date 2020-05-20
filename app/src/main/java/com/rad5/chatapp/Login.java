@@ -26,8 +26,22 @@ public class Login extends AppCompatActivity {
     Button login;
     FirebaseAuth auth;
     TextView mfPassword;
+    FirebaseUser mFirebaseUser;
     ProgressBar mProgressBar;
     public static boolean isActivityRunning;
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (mFirebaseUser!= null){
+            startActivity(new Intent(this,MainActivity.class));
+            finish();
+        }else {
+
+
+        }
+        isActivityRunning = true;
+    }
 
 
     @Override
@@ -105,11 +119,7 @@ public class Login extends AppCompatActivity {
             mProgressBar.setVisibility(View.INVISIBLE);
         }
     }
-    @Override
-    protected void onStart() {
-        super.onStart();
-        isActivityRunning = true;
-    }
+
 
     @Override
     protected void onDestroy() {
@@ -117,4 +127,7 @@ public class Login extends AppCompatActivity {
         isActivityRunning = false;
     }
 
+    public void signup(View view) {
+        startActivity(new Intent(this,Register.class));
+    }
 }

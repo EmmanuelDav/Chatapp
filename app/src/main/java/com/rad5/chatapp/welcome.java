@@ -16,19 +16,6 @@ public class welcome extends AppCompatActivity {
     FirebaseUser user;
     public static boolean isActivityRunning;
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user!= null){
-            startActivity(new Intent(welcome.this,MainActivity.class));
-            finish();
-        }else {
-
-
-        }
-        isActivityRunning = true;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

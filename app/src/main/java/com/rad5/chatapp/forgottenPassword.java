@@ -43,7 +43,7 @@ public class forgottenPassword extends AppCompatActivity {
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()){
                                 Toast.makeText(getApplicationContext(),"An email address will" +
-                                        " be sent to yiu to verify and change your password",Toast.LENGTH_LONG).show();
+                                        " be sent to you to verify and change your password",Toast.LENGTH_LONG).show();
                                 startActivity(new Intent(forgottenPassword.this,Login.class));
                             }else {
                                 String error  = task.getException().getMessage();

@@ -17,24 +17,36 @@
             android:src="@drawable/ic_action_name"
             android:visibility="gone" />
 
-        <TextView
+        <LinearLayout
+            android:id="@+id/b"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_margin="8dp"
-            android:background="#008577"
-            android:id="@+id/show_message"
-            android:text="Heavrn is my home"
-            android:textSize="17sp" />
+            android:background="@drawable/chat_bubble_sending"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:id="@+id/show_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_marginEnd="9dp"
+                android:padding="5dp"
+                android:text="Heavrn is my home"
+                android:textSize="18sp" />
+        </LinearLayout>
+
 
         <TextView
+            android:id="@+id/SeenMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="seen"
-            android:id="@+id/SeenMessage"
-            android:padding="5dp"
-            android:layout_below="@+id/show_message"
-            android:layout_alignParentEnd="true"/>
+            android:layout_below="@+id/b"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="4dp"
+            android:padding="3dp"
+            android:text="seen" />
 
     </RelativeLayout>
 

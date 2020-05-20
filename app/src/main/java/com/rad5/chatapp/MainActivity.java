@@ -7,6 +7,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -33,6 +34,8 @@ import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static android.provider.ContactsContract.CommonDataKinds.Website.URL;
+
 public class MainActivity extends AppCompatActivity {
     CircleImageView profilePic;
     TextView userName;
@@ -57,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
         mDatabaseref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
                 mDialog.dismiss();
                 Users users = dataSnapshot.getValue(Users.class);
                 userName.setText(users.getUsername());
@@ -114,20 +118,13 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
     private void ProgressDialog() {
         mDialog = new ProgressDialog(MainActivity.this);
         mDialog.setMessage("Uploading Users");
         mDialog.show();
     }
 
-    private void addViewPager(ViewPager Pager) {
-        FragmentaAdapter pagerAdapter = new FragmentaAdapter(getSupportFragmentManager());
-        pagerAdapter.addFragments(new fragment_Chat(), "Chat");
-        pagerAdapter.addFragments(new fragment_Users(), "Users");
-        pagerAdapter.addFragments(new profileFragment(), "Profile");
-        Pager.setAdapter(pagerAdapter);
-
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -140,7 +137,8 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.Log_out:
                 FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(getApplicationContext(), welcome.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                startActivity(new Intent(getApplicationContext(),
+                        Login.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
 
         }
         return false;

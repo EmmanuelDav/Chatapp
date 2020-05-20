@@ -130,7 +130,7 @@ public class MessageActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String sms = editText.getText().toString();
-                if (sms.isEmpty()) {
+                if (sms.isEmpty() || sms.equals(" ")) {
                     Toast.makeText(getApplicationContext(), "no message to send", Toast.LENGTH_LONG).show();
                 } else {
                     sendmessage(fuser.getUid(), mUserId, sms);
