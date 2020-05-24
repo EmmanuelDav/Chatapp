@@ -84,6 +84,7 @@ public class MessageActivity extends AppCompatActivity {
         mToken = new HashSet<>();
 
 
+
         setSupportActionBar(bar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
@@ -92,15 +93,6 @@ public class MessageActivity extends AppCompatActivity {
         layoutManager.setStackFromEnd(true);
         mRecyclerview.setHasFixedSize(true);
         mRecyclerview.setLayoutManager(layoutManager);
-
-
-        bar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
-        bar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(), MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
-            }
-        });
 
 
         intent = getIntent();
@@ -379,4 +371,7 @@ public class MessageActivity extends AppCompatActivity {
         status("online");
     }
 
+    public void backToMain(View view) {
+     onBackPressed();
+    }
 }

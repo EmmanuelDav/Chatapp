@@ -20,15 +20,30 @@
             android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/User_Images"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginRight="0dp"
-                app:civ_border_color="#FF000000"
-                app:civ_border_width="2dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="0dp" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="backToMain"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_arrow_back_black_24dp"/>
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/User_Images"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginRight="0dp"
+                    android:layout_gravity="center_vertical"
+                    app:civ_border_color="#FF000000"
+                    app:civ_border_width="2dp"
+                    android:layout_marginEnd="0dp" />
+
+
+            </LinearLayout>
+
 
             <TextView
                 android:id="@+id/User_names"

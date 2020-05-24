@@ -60,9 +60,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.Viewholder> {
             Glide.with(mContext).load(users.getImageUrl()).into(holder.imageView);
         }
 
-        if (ischat){
-            lastMessage(users.getId(),holder.lastMessage);
-        }else{
+        if (ischat) {
+            lastMessage(users.getId(), holder.lastMessage);
+        } else {
             holder.lastMessage.setVisibility(View.GONE);
         }
 
@@ -84,6 +84,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.Viewholder> {
             public void onClick(View view) {
                 Intent intent = new Intent(mContext, MessageActivity.class);
                 intent.putExtra("user_id", users.getId());
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 mContext.startActivity(intent);
             }
         });
@@ -123,11 +124,16 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.Viewholder> {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Chats mchat = snapshot.getValue(Chats.class);
-                    if (mchat.getReceiver().equals(mfirebaseuser.getUid()) && mchat.getSender().equals(UserId) ||
-                            mchat.getReceiver().equals(UserId) && mchat.getSender().equals(mfirebaseuser.getUid())) {
+                    if (mfirebaseuser != null) {
 
-                        theLastmessages = mchat.getMessage();
-                        //Log.d(TAG,"lastmessage = " + mchat.getMessage());
+                        if (mchat.getReceiver().equals(mfirebaseuser.getUid()) && mchat.getSender().equals(UserId) ||
+                                mchat.getReceiver().equals(UserId) && mchat.getSender().equals(mfirebaseuser.getUid())) {
+
+                            theLastmessages = mchat.getMessage();
+                            //Log.d(TAG,"lastmessage = " + mchat.getMessage());
+                        }
+
+
                     }
                 }
                 switch (theLastmessages) {

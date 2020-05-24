@@ -1,8 +1,10 @@
 package com.rad5.chatapp.Fragments;
 
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -82,7 +84,7 @@ public class profileFragment extends Fragment {
                 if (users.getImageUrl().equals("default")) {
                     mProfilepix.setImageResource(R.drawable.ic_action_name);
                 } else {
-                    Glide.with(getContext()).load(users.getImageUrl()).into(mProfilepix);
+                    Glide.with(mActivity).load(users.getImageUrl()).into(mProfilepix);
                 }
 
             }
@@ -93,6 +95,7 @@ public class profileFragment extends Fragment {
             }
         });
 
+
         mProfilepix.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -100,6 +103,13 @@ public class profileFragment extends Fragment {
             }
         });
         return view;
+    }
+    private Activity mActivity;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        mActivity = getActivity();
     }
 
     private void openImage() {

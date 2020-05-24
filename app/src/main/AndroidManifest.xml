@@ -16,7 +16,9 @@
         <activity android:name=".forgottenPassword"></activity>
         <activity android:name=".MessageActivity" />
         <activity android:name=".Register" />
-        <activity android:name=".MainActivity" />
+        <activity
+            android:name=".MainActivity"
+            android:persistent="true" />
 
         <activity android:name=".Login">
             <intent-filter>
@@ -26,7 +28,8 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".Notification.FirebaseMessageService"
+        <service
+            android:name=".Notification.FirebaseMessageService"
             android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -35,7 +38,6 @@
 
             </intent-filter>
         </service>
-
 
 
     </application>
