@@ -3,18 +3,22 @@ package com.rad5.chatapp;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.viewpager.widget.ViewPager;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -34,8 +38,6 @@ import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static android.provider.ContactsContract.CommonDataKinds.Website.URL;
-
 public class MainActivity extends AppCompatActivity {
     CircleImageView profilePic;
     TextView userName;
@@ -43,6 +45,9 @@ public class MainActivity extends AppCompatActivity {
     FirebaseUser mUser;
     DatabaseReference mDatabaseref;
     private ProgressDialog mDialog;
+    private ImageView mNav_imageView;
+    private TextView mNav_userName;
+    private TextView mUserEmail;
 
 
     @Override
@@ -53,9 +58,11 @@ public class MainActivity extends AppCompatActivity {
         profilePic = findViewById(R.id.User_Image);
         userName = findViewById(R.id.User_name);
         Toolbar toolbarv = findViewById(R.id.tooBar);
+
         setSupportActionBar(toolbarv);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         mUser = FirebaseAuth.getInstance().getCurrentUser();
+
         mDatabaseref = FirebaseDatabase.getInstance().getReference("Users").child(mUser.getUid());
         mDatabaseref.addValueEventListener(new ValueEventListener() {
             @Override
@@ -64,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
                 mDialog.dismiss();
                 Users users = dataSnapshot.getValue(Users.class);
                 userName.setText(users.getUsername());
+                mNav_userName.setText(users.getUsername());
                 Log.d("users", dataSnapshot.getValue().toString());
                 if (users.getImageUrl().equals("default")) {
                     profilePic.setImageResource(R.drawable.ic_action_name);
@@ -71,6 +79,9 @@ public class MainActivity extends AppCompatActivity {
                     Glide.with(getApplicationContext()).
                             load(users.getImageUrl())
                             .into(profilePic);
+                    Glide.with(getApplicationContext()).
+                            load(users.getImageUrl()).
+                            into(mNav_imageView);
                 }
             }
 
@@ -79,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("Database error", databaseError.getMessage());
             }
         });
+        setNavigationDrawer();
 
         final ViewPager mViewpager = findViewById(R.id.Pager);
 
@@ -116,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        getCurrentUserEmail(mUserEmail);
     }
 
 
@@ -175,5 +188,57 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         isActivityRunning = false;
+    }
+
+    private String getMessages(String text) {
+        Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG).show();
+        return text;
+    }
+
+    private void setNavigationDrawer() {
+        final DrawerLayout drawerLayout = findViewById(R.id.drawerlayout);
+        NavigationView nView = findViewById(R.id.navigationView);
+        View  header = nView.getHeaderView(0);
+        mNav_imageView = header.findViewById(R.id.nav_userImage);
+        mNav_userName = header.findViewById(R.id.nav_userName);
+        mUserEmail = header.findViewById(R.id.nav_userEmail);
+        nView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+
+                    case R.id.nav_profile:
+                        getMessages("Import your own action");
+                        menuItem.setChecked(true);
+                        drawerLayout.closeDrawers();
+                        return true;
+
+                    case R.id.nav_setting:
+                        getMessages("Import your own action for setting");
+                        drawerLayout.closeDrawers();
+                        menuItem.setChecked(true);
+                        return true;
+
+                    case R.id.nav_share:
+                        menuItem.setChecked(true);
+                        getMessages("Import your own Action for share");
+                        drawerLayout.closeDrawers();
+                        return true;
+
+                }
+                return false;
+            }
+        });
+
+    }
+
+    private void getCurrentUserEmail(TextView email){
+        mUser = FirebaseAuth.getInstance().getCurrentUser();
+        String userEmail = mUser.getEmail();
+        if (mUser ==null){
+            email.setText(userEmail);
+        }
+
+
     }
 }
