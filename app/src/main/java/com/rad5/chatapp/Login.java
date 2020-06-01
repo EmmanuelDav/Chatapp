@@ -75,6 +75,7 @@ public class Login extends AppCompatActivity {
                                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                                         if (user.isEmailVerified()) {
                                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                                            overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
                                             finish();
                                         }else {
                                             Toast.makeText(getApplicationContext(), "Please check your email to verify your account", Toast.LENGTH_SHORT).show();

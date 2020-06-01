@@ -59,6 +59,7 @@ public class FirebaseMessageService extends com.google.firebase.messaging.Fireba
         String NotiMessage = data.get("message");
         String NotifiSender = data.get("sendersName");
         Log.d(TAG,"NotifiSender = "+ NotifiSender + "  NotifiMessage =" + NotiMessage);
+        sendBroadcastNotification(NotifiSender,NotiMessage);
 
 
 

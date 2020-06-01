@@ -27,12 +27,14 @@
                 android:id="@+id/User_Image"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
+                android:visibility="gone"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="0dp"
                 android:layout_marginRight="0dp" />
 
             <TextView
                 android:id="@+id/User_name"
+                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="33dp"

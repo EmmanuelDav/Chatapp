@@ -4,9 +4,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +41,8 @@ import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static android.app.SearchManager.QUERY;
+
 public class MainActivity extends AppCompatActivity {
     CircleImageView profilePic;
     TextView userName;
@@ -48,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
     private ImageView mNav_imageView;
     private TextView mNav_userName;
     private TextView mUserEmail;
+    private static final String TAG = "MainActivity";
+    UserInput mUserInput;
 
 
     @Override
@@ -142,6 +149,27 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.value, menu);
+        MenuItem search = menu.findItem(R.id.usersSearch);
+        SearchView mSearchView = (SearchView) search.getActionView();
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                // Log.d(TAG,"Search_input "+s);
+                Intent intent = new Intent();
+                intent.putExtra("UsersInput", s);
+                intent.setAction(QUERY);
+                sendBroadcast(intent);
+
+                mUserInput.onSearchPressEnter(s);
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return false;
+            }
+        });
         return true;
     }
 
@@ -198,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
     private void setNavigationDrawer() {
         final DrawerLayout drawerLayout = findViewById(R.id.drawerlayout);
         NavigationView nView = findViewById(R.id.navigationView);
-        View  header = nView.getHeaderView(0);
+        View header = nView.getHeaderView(0);
         mNav_imageView = header.findViewById(R.id.nav_userImage);
         mNav_userName = header.findViewById(R.id.nav_userName);
         mUserEmail = header.findViewById(R.id.nav_userEmail);
@@ -232,11 +260,29 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void getCurrentUserEmail(TextView email){
+    private void getCurrentUserEmail(TextView email) {
         mUser = FirebaseAuth.getInstance().getCurrentUser();
         String userEmail = mUser.getEmail();
-        if (mUser ==null){
+        if (mUser != null) {
             email.setText(userEmail);
+        }
+    }
+
+    public interface UserInput {
+        public void onSearchPressEnter(String input);
+
+    }
+
+    @Override
+    public void onAttachFragment(@NonNull Fragment fragment) {
+        super.onAttachFragment(fragment);
+        Fragment fragment1 = fragment;
+
+
+        try {
+            mUserInput = (UserInput) fragment1;
+        } catch (ClassCastException e) {
+            Log.d(TAG, e + " m  error found");
         }
 
 

@@ -29,6 +29,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.rad5.chatapp.MainActivity;
 import com.rad5.chatapp.Models.Users;
 import com.rad5.chatapp.R;
 import com.rad5.chatapp.Adapters.UserAdapter;
@@ -40,7 +41,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class fragment_Users extends Fragment {
+public class fragment_Users extends Fragment  implements MainActivity.UserInput {
 
     List<Users> MyUsers;
     FirebaseUser mfirebaseUser;
@@ -61,29 +62,10 @@ public class fragment_Users extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_chat_fragment, container, false);
         mRecyclerview = view.findViewById(R.id.RecyclerView);
-        search = view.findViewById(R.id.user_search);
         mRecyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
         mDatabaseRefrence = FirebaseDatabase.getInstance().getReference("Users");
         mfirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         MyUsers = new ArrayList<>();
-        search.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                searchInput(charSequence.toString());
-
-            }
-
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-        });
         Asyntaskview Asytask = new Asyntaskview(getActivity());
         Asytask.execute();
         return view;
@@ -92,7 +74,7 @@ public class fragment_Users extends Fragment {
     private void searchInput(String s) {
         mfirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         Query mQuary = FirebaseDatabase.getInstance().getReference("Users").orderByChild("Username")
-                .startAt(s).endAt(s + "\f8ff");
+                .startAt(s).endAt(s + "\uf8ff");
         mQuary.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -112,6 +94,11 @@ public class fragment_Users extends Fragment {
 
             }
         });
+    }
+
+    @Override
+    public void onSearchPressEnter(String input) {
+        searchInput(input);
     }
 
     public class Asyntaskview extends AsyncTask<String, String, String> {
@@ -145,7 +132,7 @@ public class fragment_Users extends Fragment {
             mDatabaseRefrence.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (search.getText().toString().equals("")) {
+
                         MyUsers.clear();
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             Users users = snapshot.getValue(Users.class);
@@ -158,7 +145,7 @@ public class fragment_Users extends Fragment {
                         mRecyclerview.setAdapter(mUserAdapter);
                         mUserAdapter.notifyDataSetChanged();
                     }
-                }
+
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {

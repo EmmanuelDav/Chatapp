@@ -90,6 +90,7 @@ public class Register extends AppCompatActivity {
 
             });
             startActivity(new Intent(getApplicationContext(), Login.class));
+            overridePendingTransition(android.R.anim.fade_in,android.R.anim.fade_out);
             finish();
         }
     }
