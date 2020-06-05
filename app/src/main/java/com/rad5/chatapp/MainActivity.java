@@ -1,6 +1,7 @@
 package com.rad5.chatapp;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -10,7 +11,11 @@ import androidx.viewpager.widget.ViewPager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,6 +42,7 @@ import com.rad5.chatapp.Fragments.profileFragment;
 import com.rad5.chatapp.Models.Chats;
 import com.rad5.chatapp.Models.Users;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -53,15 +59,16 @@ public class MainActivity extends AppCompatActivity {
     private ImageView mNav_imageView;
     private TextView mNav_userName;
     private TextView mUserEmail;
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "MainActivityResults";
     UserInput mUserInput;
+    private String name;
+    private String resultName;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ProgressDialog();
         profilePic = findViewById(R.id.User_Image);
         userName = findViewById(R.id.User_name);
         Toolbar toolbarv = findViewById(R.id.tooBar);
@@ -70,37 +77,22 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         mUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        mDatabaseref = FirebaseDatabase.getInstance().getReference("Users").child(mUser.getUid());
-        mDatabaseref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                mDialog.dismiss();
-                Users users = dataSnapshot.getValue(Users.class);
-                userName.setText(users.getUsername());
-                mNav_userName.setText(users.getUsername());
-                Log.d("users", dataSnapshot.getValue().toString());
-                if (users.getImageUrl().equals("default")) {
-                    profilePic.setImageResource(R.drawable.ic_action_name);
-                } else {
-                    Glide.with(getApplicationContext()).
-                            load(users.getImageUrl())
-                            .into(profilePic);
-                    Glide.with(getApplicationContext()).
-                            load(users.getImageUrl()).
-                            into(mNav_imageView);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.d("Database error", databaseError.getMessage());
-            }
-        });
         setNavigationDrawer();
 
         final ViewPager mViewpager = findViewById(R.id.Pager);
+        UserInterface(mViewpager);
 
+
+        getCurrentUserEmail(mUserEmail);
+
+        isInternetConnected();
+
+
+    }
+
+
+
+    private void displayNumOfUnreadMessagesInConnected(final ViewPager mViewpager) {
         mDatabaseref = FirebaseDatabase.getInstance().getReference("Chats");
         mDatabaseref.addValueEventListener(new ValueEventListener() {
             @Override
@@ -135,7 +127,42 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        getCurrentUserEmail(mUserEmail);
+    }
+
+    private void displayUserDataIfConnected() {
+        ProgressDialog();
+
+        mDatabaseref = FirebaseDatabase.getInstance().getReference("Users").child(mUser.getUid());
+        mDatabaseref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                mDialog.dismiss();
+                Users users = dataSnapshot.getValue(Users.class);
+                userName.setText(users.getUsername());
+                name = users.getUsername();
+                mNav_userName.setText(users.getUsername());
+                Log.d("users", dataSnapshot.getValue().toString());
+                if (users.getImageUrl().equals("default")) {
+                    profilePic.setImageResource(R.drawable.ic_action_name);
+                } else {
+                    Glide.with(getApplicationContext()).
+                            load(users.getImageUrl())
+                            .into(profilePic);
+                    Glide.with(getApplicationContext()).
+                            load(users.getImageUrl()).
+                            into(mNav_imageView);
+                    saveOfflineData();
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d("Database error", databaseError.getMessage());
+            }
+        });
+
     }
 
 
@@ -143,6 +170,13 @@ public class MainActivity extends AppCompatActivity {
         mDialog = new ProgressDialog(MainActivity.this);
         mDialog.setMessage("Uploading Users");
         mDialog.show();
+    }
+
+    private boolean isInternetConnected(){
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+
     }
 
 
@@ -285,6 +319,43 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, e + " m  error found");
         }
 
+    }
+
+    private void saveOfflineData() {
+        SharedPreferences mPreference = getSharedPreferences("UserOfflineData", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = mPreference.edit();
+        editor.putString("Username", name);
+        editor.apply();
+
 
     }
+
+    private void getSavedOOfflineData() {
+        SharedPreferences mp = getSharedPreferences("UserOfflineData", Context.MODE_PRIVATE);
+        resultName = mp.getString("Username", "");
+        Log.d(TAG, "Shared Preference added successfully");
+        Log.d(TAG, "                                     "+ resultName);
+
+    }
+
+    public void  UserInterface(ViewPager pager){
+        if (isInternetConnected()){
+            displayUserDataIfConnected();
+            displayNumOfUnreadMessagesInConnected(pager);
+
+
+
+        }else {
+            getSavedOOfflineData();
+            displayUserDataIfNotConnected();
+        }
+    }
+
+    private void displayUserDataIfNotConnected() {
+        ArrayList<Users> users  = new ArrayList<>();
+        users.add(new Users("","","","",""));
+      userName.setText(resultName);
+    }
+
+
 }
