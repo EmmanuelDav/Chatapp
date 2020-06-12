@@ -64,14 +64,15 @@ public class fragment_Chat extends Fragment implements MainActivity.UserInput {
     private DatabaseReference mReference;
     private UserAdapter mUserAdapter;
     private Toolbar mToolbar;
+    private Boolean connected ;
 
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            switch (intent.getAction()){
+            switch (intent.getAction()) {
                 case QUERY:
-                    Log.d(TAG,"debugger"+ intent.getStringExtra("UsersInput"));
-                   // filterSearch(intent.getStringExtra("UserInput"));
+                    Log.d(TAG, "debugger" + intent.getStringExtra("UsersInput"));
+                    // filterSearch(intent.getStringExtra("UserInput"));
                     break;
             }
         }
@@ -84,6 +85,8 @@ public class fragment_Chat extends Fragment implements MainActivity.UserInput {
         IntentFilter filter = new IntentFilter();
         filter.addAction(QUERY);
         getContext().registerReceiver(mBroadcastReceiver, filter);
+        Log.d(TAG, "Internet Connection "+MainActivity.Connected);
+        connected = MainActivity.Connected;
 
     }
 
@@ -111,8 +114,8 @@ public class fragment_Chat extends Fragment implements MainActivity.UserInput {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 mList.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    Chatlist mchatlist =  snapshot.getValue(Chatlist.class);
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Chatlist mchatlist = snapshot.getValue(Chatlist.class);
                     mList.add(mchatlist);
 
                 }
@@ -131,7 +134,6 @@ public class fragment_Chat extends Fragment implements MainActivity.UserInput {
     }
 
 
-
     private void sendTokenToFirebase() {
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         final DatabaseReference refrence = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
@@ -139,16 +141,17 @@ public class fragment_Chat extends Fragment implements MainActivity.UserInput {
             @Override
             public void onComplete(@NonNull Task<InstanceIdResult> task) {
                 if (task.isSuccessful()) {
-                   String token = task.getResult().getToken();
+                    String token = task.getResult().getToken();
                     HashMap<String, Object> hashMap = new HashMap<>();
                     hashMap.put("UserToken", token);
                     refrence.updateChildren(hashMap);
-                }else {
-                    Log.d(TAG,"tokenError" + task.getException());
+                } else {
+                    Log.d(TAG, "tokenError" + task.getException());
                 }
             }
         });
     }
+
     private void chatlist() {
         mUsers = new ArrayList<>();
         mReference = FirebaseDatabase.getInstance().getReference("Users");
@@ -156,17 +159,17 @@ public class fragment_Chat extends Fragment implements MainActivity.UserInput {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 mUsers.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Users users = snapshot.getValue(Users.class);
-                    for (Chatlist chatlist : mList){
-                        if (users.getId().equals(chatlist.getId())){
+                    for (Chatlist chatlist : mList) {
+                        if (users.getId().equals(chatlist.getId())) {
                             mUsers.add(users);
 
                         }
                     }
 
                 }
-                mUserAdapter = new UserAdapter(mUsers,getContext(),true);
+                mUserAdapter = new UserAdapter(mUsers, getContext(), true);
                 mRecyclerView.setAdapter(mUserAdapter);
 
             }
@@ -180,7 +183,7 @@ public class fragment_Chat extends Fragment implements MainActivity.UserInput {
     }
 
 
-    public void filterSearch(String SearchInput){
+    public void filterSearch(String SearchInput) {
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         Query query = FirebaseDatabase.getInstance().getReference("Users")
                 .orderByChild("Username")
@@ -189,13 +192,13 @@ public class fragment_Chat extends Fragment implements MainActivity.UserInput {
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     mUsers.clear();
                     Users user = snapshot.getValue(Users.class);
-                    if (!mFirebaseUser.getUid().equals( user.getId())){
+                    if (!mFirebaseUser.getUid().equals(user.getId())) {
                         mUsers.add(user);
                     }
-                    mUserAdapter = new UserAdapter(mUsers,getContext(),false);
+                    mUserAdapter = new UserAdapter(mUsers, getContext(), false);
                     mRecyclerView.setAdapter(mUserAdapter);
                 }
 
@@ -211,7 +214,10 @@ public class fragment_Chat extends Fragment implements MainActivity.UserInput {
 
     @Override
     public void onSearchPressEnter(String input) {
-        Log.d(TAG,"    " + input);
+        Log.d(TAG, "    " + input);
         filterSearch(input);
     }
+
+
+
 }

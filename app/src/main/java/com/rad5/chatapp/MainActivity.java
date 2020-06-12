@@ -1,7 +1,6 @@
 package com.rad5.chatapp;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -13,9 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,7 +39,6 @@ import com.rad5.chatapp.Fragments.profileFragment;
 import com.rad5.chatapp.Models.Chats;
 import com.rad5.chatapp.Models.Users;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -58,11 +54,18 @@ public class MainActivity extends AppCompatActivity {
     private ProgressDialog mDialog;
     private ImageView mNav_imageView;
     private TextView mNav_userName;
+    public static Boolean Connected;
     private TextView mUserEmail;
     private static final String TAG = "MainActivityResults";
     UserInput mUserInput;
-    private String name;
-    private String resultName;
+    private String name, resultName;
+    private ViewPager mViewpager;
+
+    public interface UserInput {
+        public void onSearchPressEnter(String input);
+
+
+    }
 
 
     @Override
@@ -71,25 +74,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         profilePic = findViewById(R.id.User_Image);
         userName = findViewById(R.id.User_name);
-        Toolbar toolbarv = findViewById(R.id.tooBar);
-
-        setSupportActionBar(toolbarv);
+        Toolbar toolbar = findViewById(R.id.tooBar);
+        setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         mUser = FirebaseAuth.getInstance().getCurrentUser();
-
         setNavigationDrawer();
-
-        final ViewPager mViewpager = findViewById(R.id.Pager);
+        mViewpager = findViewById(R.id.Pager);
+        getCurrentUserEmail(mUserEmail);
+        isInternetConnected();
         UserInterface(mViewpager);
 
-
-        getCurrentUserEmail(mUserEmail);
-
-        isInternetConnected();
-
-
     }
-
 
 
     private void displayNumOfUnreadMessagesInConnected(final ViewPager mViewpager) {
@@ -172,11 +167,62 @@ public class MainActivity extends AppCompatActivity {
         mDialog.show();
     }
 
-    private boolean isInternetConnected(){
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    public void isInternetConnected() {
+        DatabaseReference connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
+        connectedRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                Boolean isConnected = snapshot.getValue(Boolean.class);
+                if (isConnected) {
+                    Connected = true;
+                    displayUserDataIfConnected();
+                    displayNumOfUnreadMessagesInConnected(mViewpager);
+                    Toast.makeText(getApplicationContext(), "Internet Connected", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "No Internet", Toast.LENGTH_LONG).show();
 
+                    Connected = false;
+                }
+                Log.d(TAG, "InternetConnection  " + (Connected));
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                System.err.println("Listener was cancelled");
+            }
+
+        });
+
+
+    }
+
+    public final boolean isInternetOn() {
+        // get Connectivity Manager object to check connection
+        ConnectivityManager connec = (ConnectivityManager) getSystemService(getBaseContext().CONNECTIVITY_SERVICE);
+
+        // Check for network connections
+        if (connec.getNetworkInfo(0).getState() == android.net.NetworkInfo.State.CONNECTED ||
+                connec.getNetworkInfo(0).getState() == android.net.NetworkInfo.State.CONNECTING ||
+                connec.getNetworkInfo(1).getState() == android.net.NetworkInfo.State.CONNECTING ||
+                connec.getNetworkInfo(1).getState() == android.net.NetworkInfo.State.CONNECTED) {
+
+            // if connected with internet
+            Log.i(TAG, "Internet Connected");
+
+            return true;
+
+        } else if (
+                connec.getNetworkInfo(0).getState() == android.net.NetworkInfo.State.DISCONNECTED ||
+                        connec.getNetworkInfo(1).getState() == android.net.NetworkInfo.State.DISCONNECTED) {
+
+
+            Log.i(TAG, "No Internet Connected");
+
+            return false;
+        }
+        return false;
     }
 
 
@@ -195,6 +241,7 @@ public class MainActivity extends AppCompatActivity {
                 sendBroadcast(intent);
 
                 mUserInput.onSearchPressEnter(s);
+
 
                 return false;
             }
@@ -302,10 +349,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public interface UserInput {
-        public void onSearchPressEnter(String input);
-
-    }
 
     @Override
     public void onAttachFragment(@NonNull Fragment fragment) {
@@ -334,28 +377,18 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences mp = getSharedPreferences("UserOfflineData", Context.MODE_PRIVATE);
         resultName = mp.getString("Username", "");
         Log.d(TAG, "Shared Preference added successfully");
-        Log.d(TAG, "                                     "+ resultName);
+        Log.d(TAG, "                                     " + resultName);
 
     }
 
-    public void  UserInterface(ViewPager pager){
-        if (isInternetConnected()){
-            displayUserDataIfConnected();
-            displayNumOfUnreadMessagesInConnected(pager);
+    public void UserInterface(ViewPager pager) {
+        getSavedOOfflineData();
 
+        displayUserDataIfNotConnected(pager);
 
-
-        }else {
-            getSavedOOfflineData();
-            displayUserDataIfNotConnected();
-        }
     }
 
-    private void displayUserDataIfNotConnected() {
-        ArrayList<Users> users  = new ArrayList<>();
-        users.add(new Users("","","","",""));
-      userName.setText(resultName);
+    private void displayUserDataIfNotConnected(ViewPager pager) {
+        userName.setText(resultName);
     }
-
-
 }

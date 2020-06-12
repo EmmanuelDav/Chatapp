@@ -41,7 +41,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class fragment_Users extends Fragment  implements MainActivity.UserInput {
+public class fragment_Users extends Fragment implements MainActivity.UserInput {
 
     List<Users> MyUsers;
     FirebaseUser mfirebaseUser;
@@ -66,8 +66,7 @@ public class fragment_Users extends Fragment  implements MainActivity.UserInput 
         mDatabaseRefrence = FirebaseDatabase.getInstance().getReference("Users");
         mfirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         MyUsers = new ArrayList<>();
-        Asyntaskview Asytask = new Asyntaskview(getActivity());
-        Asytask.execute();
+        new Asyntaskview(getContext()).execute();
         return view;
     }
 
@@ -101,6 +100,7 @@ public class fragment_Users extends Fragment  implements MainActivity.UserInput 
         searchInput(input);
     }
 
+
     public class Asyntaskview extends AsyncTask<String, String, String> {
         Context mContext;
 
@@ -133,18 +133,18 @@ public class fragment_Users extends Fragment  implements MainActivity.UserInput 
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                        MyUsers.clear();
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            Users users = snapshot.getValue(Users.class);
-                            assert users != null;
-                            if (!users.getId().equals(mfirebaseUser.getUid())) {
-                                MyUsers.add(users);
-                            }
+                    MyUsers.clear();
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        Users users = snapshot.getValue(Users.class);
+                        assert users != null;
+                        if (!users.getId().equals(mfirebaseUser.getUid())) {
+                            MyUsers.add(users);
                         }
-                        mUserAdapter = new UserAdapter(MyUsers, getContext(), true);
-                        mRecyclerview.setAdapter(mUserAdapter);
-                        mUserAdapter.notifyDataSetChanged();
                     }
+                    mUserAdapter = new UserAdapter(MyUsers, getContext(), true);
+                    mRecyclerview.setAdapter(mUserAdapter);
+                    mUserAdapter.notifyDataSetChanged();
+                }
 
 
                 @Override
@@ -159,6 +159,7 @@ public class fragment_Users extends Fragment  implements MainActivity.UserInput 
 
 
     }
+
 
 
 }
