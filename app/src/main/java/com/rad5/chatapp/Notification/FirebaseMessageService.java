@@ -1,13 +1,9 @@
 package com.rad5.chatapp.Notification;
 
-import android.annotation.SuppressLint;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.util.Log;
@@ -15,28 +11,14 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.analytics.FirebaseAnalytics;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
-import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.rad5.chatapp.Login;
 import com.rad5.chatapp.MainActivity;
 import com.rad5.chatapp.MessageActivity;
 import com.rad5.chatapp.R;
 import com.rad5.chatapp.Register;
-import com.rad5.chatapp.welcome;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 
 public class FirebaseMessageService extends com.google.firebase.messaging.FirebaseMessagingService {
@@ -108,8 +90,7 @@ public class FirebaseMessageService extends com.google.firebase.messaging.Fireba
         boolean isActivityRunning = MainActivity.isActivityRunning
                 || Login.isActivityRunning
                 || MessageActivity.isActivityRunning
-                || Register.isActivityRunning
-                || welcome.isActivityRunning;
+                || Register.isActivityRunning;
         if (isActivityRunning) {
             Log.d(TAG, "isApplicationInForeground: application is in foreground.");
             return true;

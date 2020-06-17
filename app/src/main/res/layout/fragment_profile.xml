@@ -9,6 +9,8 @@
     <!-- TODO: Update blank fragment layout -->
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
+        android:backgroundTint="@color/colorPrimary"
+
         android:layout_height="wrap_content">
 
         <RelativeLayout

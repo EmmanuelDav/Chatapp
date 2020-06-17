@@ -18,6 +18,7 @@
         android:layout_width="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/colorAccent"
         android:background="@drawable/chat_bubble_recieving"
         android:layout_toEndOf="@+id/profile_image"
         android:orientation="vertical">
@@ -28,6 +29,7 @@
             android:layout_height="wrap_content"
             android:padding="5dp"
             android:minWidth="7dp"
+            style="@style/CaptionText"
             android:layout_marginStart="10dp"
             android:text="heaen"
             android:textSize="18sp" />

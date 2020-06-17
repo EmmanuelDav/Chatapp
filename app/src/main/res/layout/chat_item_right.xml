@@ -21,6 +21,7 @@
             android:id="@+id/b"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorPrimary"
             android:layout_alignParentRight="true"
             android:background="@drawable/chat_bubble_sending"
             android:orientation="vertical">
@@ -32,6 +33,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:layout_marginEnd="9dp"
+                style="@style/NormalText"
                 android:padding="5dp"
                 android:text="Heavrn is my home"
                 android:textSize="18sp" />

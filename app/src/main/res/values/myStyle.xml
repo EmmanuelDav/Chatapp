@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="CaptionText" parent="@android:style/TextAppearance.Medium">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:typeface">serif</item>
+    </style>
+
+    <style name="EdithText" parent="android:Widget.EditText">
+        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:typeface">serif</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="ButtonStyle" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:typeface">serif</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
+
+    <style name="NormalText">
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+        <item name="android:typeface">serif</item>
+        <item name="android:textStyle">bold</item>
+
+
+
+
+    </style>
+
+
+</resources>

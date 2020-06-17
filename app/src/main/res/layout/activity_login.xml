@@ -15,28 +15,38 @@
         android:padding="15dp"
         tools:context=".Login">
 
-
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="136dp"
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_marginEnd="8dp"
-            android:text="Welcome"
-            android:textSize="36sp"
-            android:textStyle="bold"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="100dp"
+            android:layout_width="0dp"
+            android:id="@+id/textView3"
+            android:background="@color/colorAccent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.526"
+            app:layout_constraintHorizontal_bias="0.517"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:textStyle="bold" />
+            android:layout_height="142dp">
+
+            <TextView
+                style="@style/CaptionText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="@string/welcome"
+                android:textSize="36sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+
 
         <TextView
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            style="@style/NormalText"
             android:text="Login in to continue"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -50,7 +60,8 @@
             android:layout_marginTop="36dp"
             android:ems="10"
             android:hint="Password"
-            android:inputType="textPersonName"
+            style="@style/EdithText"
+            android:inputType="numberPassword"
             app:layout_constraintEnd_toEndOf="@+id/login_email"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="@+id/login_email"
@@ -58,13 +69,14 @@
 
         <EditText
             android:id="@+id/login_email"
+            style="@style/EdithText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:inputType="textEmailAddress"
             android:layout_marginTop="32dp"
             android:ems="10"
             android:hint="Email Address"
-            android:inputType="textPersonName"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView" />
@@ -77,6 +89,7 @@
             android:layout_marginTop="32dp"
             android:layout_marginEnd="24dp"
             android:text="Log in"
+            style="@style/ButtonStyle"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -88,6 +101,7 @@
             android:layout_height="20dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="5dp"
+            style="@style/NormalText"
             android:text="Forgotten password ?"
             android:textSize="15sp"
             android:textStyle="bold"
@@ -111,6 +125,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:onClick="signup"
+            style="@style/NormalText"
             android:text="Don't have an account ? Sign up"
             android:textSize="18sp"
             android:textStyle="bold"
