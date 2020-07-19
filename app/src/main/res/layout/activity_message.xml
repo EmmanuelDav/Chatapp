@@ -3,20 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="#B1BEBE"
     android:layout_height="match_parent"
     android:backgroundTint="@color/white"
     tools:context=".MessageActivity">
+
     <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
         android:id="@+id/appbar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/tooBarl"
             android:layout_width="match_parent"
-            android:backgroundTint="@color/colorPrimaryDark"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/colorPrimaryDark"
 
             android:minHeight="?attr/actionBarSize"
             android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"
@@ -32,16 +32,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_arrow_back_black_24dp"/>
+                    android:src="@drawable/ic_arrow_back_black_24dp" />
+
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/User_Images"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
-                    android:layout_marginRight="0dp"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="0dp"
+                    android:layout_marginRight="0dp"
                     app:civ_border_color="#FF000000"
-                    app:civ_border_width="2dp"
-                    android:layout_marginEnd="0dp" />
+                    app:civ_border_width="2dp" />
 
 
             </LinearLayout>
@@ -49,9 +50,9 @@
 
             <TextView
                 android:id="@+id/User_names"
-                android:layout_marginLeft="33dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="33dp"
                 android:textSize="20sp" />
 
         </androidx.appcompat.widget.Toolbar>
@@ -63,38 +64,37 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chat_recyclerview"
         android:layout_width="match_parent"
-        android:layout_below="@+id/appbar"
+        android:layout_height="match_parent"
         android:layout_above="@+id/relatve"
-        android:layout_height="match_parent" />
+        android:layout_below="@+id/appbar" />
 
     <RelativeLayout
         android:id="@+id/relatve"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="5dp"
+        android:layout_alignParentBottom="true"
         android:background="#FBFCFC"
-        android:layout_alignParentBottom="true">
+        android:padding="5dp">
 
         <EditText
-            android:backgroundTint="@color/colorPrimaryDark"
-            android:layout_toLeftOf="@+id/btn_send"
-            android:layout_width="match_parent"
-            android:layout_centerVertical="true"
             android:id="@+id/chat_text"
             style="@style/EdithText"
-            android:hint="  Typing a Message"
-            android:layout_height="wrap_content"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/btn_send"
+            android:backgroundTint="@color/colorPrimaryDark"
+            android:hint="  Typing a Message" />
 
         <ImageButton
+            android:id="@+id/btn_send"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_centerVertical="true"
-            android:tint="@color/colorAccent"
-            android:backgroundTint="@color/colorAccent"
-            android:background="@drawable/ic_send_black_24dp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:id="@+id/btn_send"/>
+            android:layout_centerVertical="true"
+            android:background="@drawable/ic_send_black_24dp"
+            android:tint="@color/colorAccent" />
     </RelativeLayout>
 
 </RelativeLayout>

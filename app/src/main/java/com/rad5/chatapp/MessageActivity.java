@@ -24,7 +24,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.rad5.chatapp.Adapters.UserAdapter;
 import com.rad5.chatapp.FCM.Data;
 import com.rad5.chatapp.FCM.FCM;
 import com.rad5.chatapp.FCM.FirebaseMessage;
@@ -47,7 +46,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.Body;
 
 public class MessageActivity extends AppCompatActivity {
     ImageButton imageButton;
@@ -55,7 +53,7 @@ public class MessageActivity extends AppCompatActivity {
     CircleImageView mImageView;
     TextView mTextView;
     Intent intent;
-    DatabaseReference myref;
+    DatabaseReference myRef;
     MessageAdapter chatAdapter;
     List<Chats> mChats;
     FirebaseUser fuser;
@@ -67,7 +65,6 @@ public class MessageActivity extends AppCompatActivity {
     public String mServerkey;
     public static final String TAG = "MessageActivity";
     public static final String baseUrl = "https://fcm.googleapis.com/fcm/";
-    private String mLastmessages;
     private String username;
 
 
@@ -82,27 +79,23 @@ public class MessageActivity extends AppCompatActivity {
         editText = findViewById(R.id.chat_text);
         Toolbar bar = findViewById(R.id.tooBarl);
         mToken = new HashSet<>();
-
-
-
         setSupportActionBar(bar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-
         mRecyclerview = findViewById(R.id.chat_recyclerview);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         layoutManager.setStackFromEnd(true);
         mRecyclerview.setHasFixedSize(true);
         mRecyclerview.setLayoutManager(layoutManager);
 
-
         intent = getIntent();
         mUserId = intent.getStringExtra("user_id");
         fuser = FirebaseAuth.getInstance().getCurrentUser();
-        myref = FirebaseDatabase.getInstance().getReference("Users").child(mUserId);
-        myref.addValueEventListener(new ValueEventListener() {
+        myRef = FirebaseDatabase.getInstance().getReference("Users").child(mUserId);
+        myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Users user = dataSnapshot.getValue(Users.class);
+                assert user != null;
                 mTextView.setText(user.getUsername());
                 if (!user.getImageUrl().equals("default")) {
                     Glide.with(getApplicationContext()).load(user.getImageUrl()).into(mImageView);
@@ -127,19 +120,14 @@ public class MessageActivity extends AppCompatActivity {
                 } else {
                     sendmessage(fuser.getUid(), mUserId, sms);
                     sendNotifictionmessagetoUser(sms, username);
-
-
                 }
                 editText.setText("");
-
             }
         });
-        getServerKey();
+        //getServerKey();
         getToken();
-
         getUsernmae();
         MessageSeen(mUserId);
-
     }
 
     @Override
@@ -221,28 +209,28 @@ public class MessageActivity extends AppCompatActivity {
 
     }
 
-    public void getServerKey() {
-
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-        Query query = reference.child("ServerKey")
-                .orderByValue();
-        query.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                DataSnapshot snapshot = dataSnapshot.getChildren().iterator().next();
-                mServerkey = snapshot.getValue().toString();
-
-                Log.d(TAG, "mServerKey   =" + mServerkey);
-
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
+//    public void getServerKey() {
+//
+//        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
+//        Query query = reference.child("ServerKey")
+//                .orderByValue();
+//        query.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                DataSnapshot snapshot = dataSnapshot.getChildren().iterator().next();
+//                mServerkey = snapshot.getValue().toString();
+//
+//                Log.d(TAG, "mServerKey   =" + mServerkey);
+//
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
+//    }
 
     public void getToken() {
         mToken.clear();
@@ -263,10 +251,9 @@ public class MessageActivity extends AppCompatActivity {
 
     }
 
-
     private void MessageSeen(final String UserId) {
-        myref = FirebaseDatabase.getInstance().getReference("Chats");
-        isSeenListener = myref.addValueEventListener(new ValueEventListener() {
+        myRef = FirebaseDatabase.getInstance().getReference("Chats");
+        isSeenListener = myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
@@ -275,15 +262,11 @@ public class MessageActivity extends AppCompatActivity {
                         HashMap<String, Object> map = new HashMap<>();
                         map.put("isSeen", true);
                         snapshot.getRef().updateChildren(map);
-
                     }
-
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
     }
@@ -299,7 +282,6 @@ public class MessageActivity extends AppCompatActivity {
         final DatabaseReference mchatRef = FirebaseDatabase.getInstance().getReference("Chatlist")
                 .child(fuser.getUid())
                 .child(mUserId);
-
         mchatRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -307,26 +289,20 @@ public class MessageActivity extends AppCompatActivity {
                     mchatRef.child("id").setValue(mUserId);
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
-
-
     }
-
 
     public void readMessages(final String Myid, final String MUserId, final String mImageUrl) {
         mChats = new ArrayList<>();
         mChats.clear();
-        myref = FirebaseDatabase.getInstance().getReference("Chats");
-        myref.addValueEventListener(new ValueEventListener() {
+        myRef = FirebaseDatabase.getInstance().getReference("Chats");
+        myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-
                     Chats chats = snapshot.getValue(Chats.class);
                     assert chats != null;
                     if (chats.getReceiver().equals(Myid) && chats.getSender().equals(MUserId) ||
@@ -336,33 +312,27 @@ public class MessageActivity extends AppCompatActivity {
                     chatAdapter = new MessageAdapter(mChats, MessageActivity.this, mImageUrl);
                     mRecyclerview.setAdapter(chatAdapter);
                 }
-
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.d("chatdisplay", databaseError.getMessage());
 
             }
         });
-
     }
 
     public void status(String status) {
-        myref = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
+        myRef = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("status", status);
-        myref.updateChildren(hashMap);
-
+        myRef.updateChildren(hashMap);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        myref.removeEventListener(isSeenListener);
+        myRef.removeEventListener(isSeenListener);
         status("offline");
-
-
     }
 
     @Override

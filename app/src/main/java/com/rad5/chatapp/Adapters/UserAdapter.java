@@ -98,7 +98,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.Viewholder> {
 
     public class Viewholder extends RecyclerView.ViewHolder {
         public TextView textView;
-        public CircleImageView imageView;
+        public ImageView imageView;
         ImageView img_off, img_on;
         TextView lastMessage;
 
@@ -106,7 +106,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.Viewholder> {
             super(itemView);
             textView = itemView.findViewById(R.id.profile_name);
             imageView = itemView.findViewById(R.id.profile_pix);
-
             img_off = itemView.findViewById(R.id.img_off);
             img_on = itemView.findViewById(R.id.img_on);
             lastMessage = itemView.findViewById(R.id.lastMessage);
@@ -124,30 +123,22 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.Viewholder> {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Chats mchat = snapshot.getValue(Chats.class);
                     if (mfirebaseuser != null) {
-
                         if (mchat.getReceiver().equals(mfirebaseuser.getUid()) && mchat.getSender().equals(UserId) ||
                                 mchat.getReceiver().equals(UserId) && mchat.getSender().equals(mfirebaseuser.getUid())) {
-
                             theLastmessages = mchat.getMessage();
                             //Log.d(TAG,"lastmessage = " + mchat.getMessage());
                         }
-
-
                     }
                 }
                 switch (theLastmessages) {
                     case "default":
                         LAstMessages.setText(" ");
                         break;
-
                     default:
                         LAstMessages.setText(theLastmessages);
                         break;
                 }
-
                 theLastmessages = "default";
-
-
             }
 
             @Override

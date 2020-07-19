@@ -14,7 +14,7 @@
         android:layout_marginRight="6dp"
         app:civ_border_width="2dp" />
 
-    <LinearLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_height="wrap_content"
@@ -23,18 +23,19 @@
         android:layout_toEndOf="@+id/profile_image"
         android:orientation="vertical">
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/show_message"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:padding="5dp"
             android:minWidth="7dp"
-            style="@style/CaptionText"
+            android:gravity="center"
+            style="@style/textStyle"
             android:layout_marginStart="10dp"
             android:text="heaen"
             android:textSize="18sp" />
 
-    </LinearLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 
     <TextView

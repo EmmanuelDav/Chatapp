@@ -47,26 +47,20 @@ public class fragment_Users extends Fragment implements MainActivity.UserInput {
     FirebaseUser mfirebaseUser;
     DatabaseReference mDatabaseRefrence;
     UserAdapter mUserAdapter;
-    public ProgressDialog pDialog;
-    EditText search;
-
-    public fragment_Users() {
-    }
+    public fragment_Users() {}
 
     RecyclerView mRecyclerview;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_chat_fragment, container, false);
         mRecyclerview = view.findViewById(R.id.RecyclerView);
         mRecyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
         mDatabaseRefrence = FirebaseDatabase.getInstance().getReference("Users");
         mfirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         MyUsers = new ArrayList<>();
-        new Asyntaskview(getContext()).execute();
+        getUsers();
         return view;
     }
 
@@ -90,7 +84,6 @@ public class fragment_Users extends Fragment implements MainActivity.UserInput {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
     }
@@ -101,65 +94,27 @@ public class fragment_Users extends Fragment implements MainActivity.UserInput {
     }
 
 
-    public class Asyntaskview extends AsyncTask<String, String, String> {
-        Context mContext;
-
-        public Asyntaskview(Context context) {
-            mContext = context;
-
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            pDialog.dismiss();
-
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            pDialog = new ProgressDialog(mContext);
-            pDialog.setMessage("Please wait...");
-            pDialog.setCancelable(false);
-            pDialog.show();
-
-        }
-
-
-        @Override
-        protected String doInBackground(String... strings) {
-            mDatabaseRefrence.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                    MyUsers.clear();
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        Users users = snapshot.getValue(Users.class);
-                        assert users != null;
-                        if (!users.getId().equals(mfirebaseUser.getUid())) {
-                            MyUsers.add(users);
-                        }
+    private void getUsers() {
+        mDatabaseRefrence.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                MyUsers.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Users users = snapshot.getValue(Users.class);
+                    assert users != null;
+                    if (!users.getId().equals(mfirebaseUser.getUid())) {
+                        MyUsers.add(users);
                     }
-                    mUserAdapter = new UserAdapter(MyUsers, getContext(), true);
-                    mRecyclerview.setAdapter(mUserAdapter);
-                    mUserAdapter.notifyDataSetChanged();
                 }
+                mUserAdapter = new UserAdapter(MyUsers, getContext(), true);
+                mRecyclerview.setAdapter(mUserAdapter);
+                mUserAdapter.notifyDataSetChanged();
+            }
 
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    Log.d("displayerror", databaseError.getMessage());
-
-                }
-
-            });
-            return null;
-        }
-
-
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.d("displayerror", databaseError.getMessage());
+            }
+        });
     }
-
-
-
 }

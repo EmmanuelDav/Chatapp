@@ -48,6 +48,7 @@ import java.util.List;
 import java.util.zip.Inflater;
 
 import static android.app.SearchManager.QUERY;
+import static com.rad5.chatapp.MainActivity.Connected;
 
 
 /**
@@ -84,10 +85,9 @@ public class fragment_Chat extends Fragment implements MainActivity.UserInput {
         super.onCreate(savedInstanceState);
         IntentFilter filter = new IntentFilter();
         filter.addAction(QUERY);
-        getContext().registerReceiver(mBroadcastReceiver, filter);
-        Log.d(TAG, "Internet Connection "+MainActivity.Connected);
-        connected = MainActivity.Connected;
-
+       // getContext().registerReceiver(mBroadcastReceiver, filter);
+        Log.d(TAG, "Internet Connection "+ Connected);
+        connected = Connected;
     }
 
     @Override
@@ -97,16 +97,12 @@ public class fragment_Chat extends Fragment implements MainActivity.UserInput {
         IntentFilter filter = new IntentFilter();
         filter.addAction(QUERY);
         getContext().registerReceiver(mBroadcastReceiver, filter);
-
         mRecyclerView = v.findViewById(R.id.recyclerview);
         mToolbar = v.findViewById(R.id.tooBar);
         getActivity().getActionBar();
-
-
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(layoutManager);
-
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         mList = new ArrayList<>();
         mReference = FirebaseDatabase.getInstance().getReference("Chatlist").child(mFirebaseUser.getUid());
@@ -117,15 +113,12 @@ public class fragment_Chat extends Fragment implements MainActivity.UserInput {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Chatlist mchatlist = snapshot.getValue(Chatlist.class);
                     mList.add(mchatlist);
-
                 }
-
                 chatlist();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
         sendTokenToFirebase();
@@ -164,14 +157,11 @@ public class fragment_Chat extends Fragment implements MainActivity.UserInput {
                     for (Chatlist chatlist : mList) {
                         if (users.getId().equals(chatlist.getId())) {
                             mUsers.add(users);
-
                         }
                     }
-
                 }
                 mUserAdapter = new UserAdapter(mUsers, getContext(), true);
                 mRecyclerView.setAdapter(mUserAdapter);
-
             }
 
             @Override

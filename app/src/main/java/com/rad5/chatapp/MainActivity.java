@@ -7,10 +7,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
-import android.app.ProgressDialog;
-import android.content.Context;
+import android.app.Dialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -46,12 +44,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import static android.app.SearchManager.QUERY;
 
 public class MainActivity extends AppCompatActivity {
-    CircleImageView profilePic;
+    ImageView profilePic;
     TextView userName;
     public static Boolean isActivityRunning;
     FirebaseUser mUser;
-    DatabaseReference mDatabaseref;
-    private ProgressDialog mDialog;
+    DatabaseReference mDatabaseRef;
+    private Dialog mDialog;
     private ImageView mNav_imageView;
     private TextView mNav_userName;
     public static Boolean Connected;
@@ -60,14 +58,7 @@ public class MainActivity extends AppCompatActivity {
     UserInput mUserInput;
     private String name, resultName;
     private ViewPager mViewpager;
-
-    public interface UserInput {
-        public void onSearchPressEnter(String input);
-
-
-    }
-
-
+    public interface UserInput { public void onSearchPressEnter(String input);}
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,14 +73,12 @@ public class MainActivity extends AppCompatActivity {
         mViewpager = findViewById(R.id.Pager);
         getCurrentUserEmail(mUserEmail);
         isInternetConnected();
-        UserInterface(mViewpager);
-
     }
 
 
     private void displayNumOfUnreadMessagesInConnected(final ViewPager mViewpager) {
-        mDatabaseref = FirebaseDatabase.getInstance().getReference("Chats");
-        mDatabaseref.addValueEventListener(new ValueEventListener() {
+        mDatabaseRef = FirebaseDatabase.getInstance().getReference("Chats");
+        mDatabaseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 FragmentaAdapter pagerAdapter = new FragmentaAdapter(getSupportFragmentManager());
@@ -100,23 +89,17 @@ public class MainActivity extends AppCompatActivity {
                         unread++;
                     }
                 }
-
                 if (unread == 0) {
                     pagerAdapter.addFragments(new fragment_Chat(), "Chat");
                 } else {
                     pagerAdapter.addFragments(new fragment_Chat(), "(" + unread + ")" + "Chat");
                 }
-
-
                 pagerAdapter.addFragments(new fragment_Users(), "Users");
                 pagerAdapter.addFragments(new profileFragment(), "Profile");
                 mViewpager.setAdapter(pagerAdapter);
-
                 TabLayout layout = findViewById(R.id.tablayout);
                 layout.setupWithViewPager(mViewpager);
-
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
@@ -126,12 +109,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void displayUserDataIfConnected() {
         ProgressDialog();
-
-        mDatabaseref = FirebaseDatabase.getInstance().getReference("Users").child(mUser.getUid());
-        mDatabaseref.addValueEventListener(new ValueEventListener() {
+        mDatabaseRef = FirebaseDatabase.getInstance().getReference("Users").child(mUser.getUid());
+        mDatabaseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
                 mDialog.dismiss();
                 Users users = dataSnapshot.getValue(Users.class);
                 userName.setText(users.getUsername());
@@ -139,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
                 mNav_userName.setText(users.getUsername());
                 Log.d("users", dataSnapshot.getValue().toString());
                 if (users.getImageUrl().equals("default")) {
-                    profilePic.setImageResource(R.drawable.ic_action_name);
+                    profilePic.setImageResource(R.drawable.profile);
                 } else {
                     Glide.with(getApplicationContext()).
                             load(users.getImageUrl())
@@ -147,23 +128,19 @@ public class MainActivity extends AppCompatActivity {
                     Glide.with(getApplicationContext()).
                             load(users.getImageUrl()).
                             into(mNav_imageView);
-                    saveOfflineData();
                 }
-
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.d("Database error", databaseError.getMessage());
             }
         });
-
     }
 
 
     private void ProgressDialog() {
-        mDialog = new ProgressDialog(MainActivity.this);
-        mDialog.setMessage("Uploading Users");
+        mDialog = new Dialog(MainActivity.this);
+        mDialog.setContentView(R.layout.dialog);
         mDialog.show();
     }
 
@@ -180,44 +157,31 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Internet Connected", Toast.LENGTH_LONG).show();
                 } else {
                     Toast.makeText(getApplicationContext(), "No Internet", Toast.LENGTH_LONG).show();
-
                     Connected = false;
                 }
                 Log.d(TAG, "InternetConnection  " + (Connected));
-
-
             }
 
             @Override
             public void onCancelled(DatabaseError error) {
                 System.err.println("Listener was cancelled");
             }
-
         });
-
-
     }
 
     public final boolean isInternetOn() {
         // get Connectivity Manager object to check connection
         ConnectivityManager connec = (ConnectivityManager) getSystemService(getBaseContext().CONNECTIVITY_SERVICE);
-
         // Check for network connections
         if (connec.getNetworkInfo(0).getState() == android.net.NetworkInfo.State.CONNECTED ||
                 connec.getNetworkInfo(0).getState() == android.net.NetworkInfo.State.CONNECTING ||
                 connec.getNetworkInfo(1).getState() == android.net.NetworkInfo.State.CONNECTING ||
                 connec.getNetworkInfo(1).getState() == android.net.NetworkInfo.State.CONNECTED) {
-
-            // if connected with internet
             Log.i(TAG, "Internet Connected");
-
             return true;
-
         } else if (
                 connec.getNetworkInfo(0).getState() == android.net.NetworkInfo.State.DISCONNECTED ||
                         connec.getNetworkInfo(1).getState() == android.net.NetworkInfo.State.DISCONNECTED) {
-
-
             Log.i(TAG, "No Internet Connected");
 
             return false;
@@ -234,18 +198,13 @@ public class MainActivity extends AppCompatActivity {
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                // Log.d(TAG,"Search_input "+s);
                 Intent intent = new Intent();
                 intent.putExtra("UsersInput", s);
                 intent.setAction(QUERY);
                 sendBroadcast(intent);
-
                 mUserInput.onSearchPressEnter(s);
-
-
                 return false;
             }
-
             @Override
             public boolean onQueryTextChange(String s) {
                 return false;
@@ -261,24 +220,21 @@ public class MainActivity extends AppCompatActivity {
                 FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(getApplicationContext(),
                         Login.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
-
         }
         return false;
     }
 
     public void status(String status) {
-        mDatabaseref = FirebaseDatabase.getInstance().getReference("Users").child(mUser.getUid());
+        mDatabaseRef = FirebaseDatabase.getInstance().getReference("Users").child(mUser.getUid());
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("status", status);
-        mDatabaseref.updateChildren(hashMap);
-
+        mDatabaseRef.updateChildren(hashMap);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         status("offline");
-
     }
 
     @Override
@@ -315,30 +271,25 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                 switch (menuItem.getItemId()) {
-
                     case R.id.nav_profile:
                         getMessages("Import your own action");
                         menuItem.setChecked(true);
                         drawerLayout.closeDrawers();
                         return true;
-
                     case R.id.nav_setting:
                         getMessages("Import your own action for setting");
                         drawerLayout.closeDrawers();
                         menuItem.setChecked(true);
                         return true;
-
                     case R.id.nav_share:
                         menuItem.setChecked(true);
                         getMessages("Import your own Action for share");
                         drawerLayout.closeDrawers();
                         return true;
-
                 }
                 return false;
             }
         });
-
     }
 
     private void getCurrentUserEmail(TextView email) {
@@ -348,47 +299,14 @@ public class MainActivity extends AppCompatActivity {
             email.setText(userEmail);
         }
     }
-
-
     @Override
     public void onAttachFragment(@NonNull Fragment fragment) {
         super.onAttachFragment(fragment);
         Fragment fragment1 = fragment;
-
-
         try {
             mUserInput = (UserInput) fragment1;
         } catch (ClassCastException e) {
             Log.d(TAG, e + " m  error found");
         }
-
-    }
-
-    private void saveOfflineData() {
-        SharedPreferences mPreference = getSharedPreferences("UserOfflineData", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = mPreference.edit();
-        editor.putString("Username", name);
-        editor.apply();
-
-
-    }
-
-    private void getSavedOOfflineData() {
-        SharedPreferences mp = getSharedPreferences("UserOfflineData", Context.MODE_PRIVATE);
-        resultName = mp.getString("Username", "");
-        Log.d(TAG, "Shared Preference added successfully");
-        Log.d(TAG, "                                     " + resultName);
-
-    }
-
-    public void UserInterface(ViewPager pager) {
-        getSavedOOfflineData();
-
-        displayUserDataIfNotConnected(pager);
-
-    }
-
-    private void displayUserDataIfNotConnected(ViewPager pager) {
-        userName.setText(resultName);
     }
 }

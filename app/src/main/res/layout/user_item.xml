@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="75dp"
-    android:orientation="vertical">
+    android:background="@color/white"
+    android:padding="10dp">
 
 
     <LinearLayout
@@ -19,28 +20,33 @@
             android:orientation="vertical">
 
 
-            <de.hdodenhof.circleimageview.CircleImageView
+            <ImageView
                 android:id="@+id/profile_pix"
                 android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_height="match_parent"
                 android:layout_centerVertical="true"
-                android:layout_margin="5dp" />
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
+                android:src="@drawable/profile" />
 
 
-            <de.hdodenhof.circleimageview.CircleImageView
+            <ImageView
                 android:id="@+id/img_on"
                 android:layout_width="10dp"
                 android:layout_height="15dp"
                 android:layout_alignBottom="@+id/profile_pix"
+                android:layout_gravity="center"
                 android:layout_marginStart="40dp"
                 android:background="#16F703"
-                android:visibility="invisible" />
+                android:scaleType="center"
+                android:visibility="visible" />
+
 
             <ImageView
                 android:id="@+id/img_off"
                 android:layout_width="15dp"
                 android:layout_height="15dp"
-                android:layout_alignBottom="@+id/profile_pix"
+                android:layout_alignBottom="@+id/profile_image"
                 android:layout_marginStart="40dp"
                 android:background="#11423A3A"
                 android:visibility="invisible" />
@@ -49,42 +55,39 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="7dp"
+            android:layout_gravity="center"
             android:orientation="vertical">
-
 
             <TextView
                 android:id="@+id/profile_name"
+                style="@style/textStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@+id/profile_pix"
-                android:layout_toRightOf="@+id/profile_pix"
                 android:text="UserName"
-                android:textSize="20sp" />
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/lastMessage"
+                style="@style/textStyle"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/profile_name"
-                android:layout_toEndOf="@+id/profile_pix"
-                android:singleLine="true"
+                android:layout_height="20dp"
                 android:layout_marginTop="3dp"
+                android:singleLine="true"
                 android:text="      "
-                android:textColor="#16f703"
-                android:textSize="15sp" />
+                android:textColor="@color/colorGreen"
+                android:textSize="13sp" />
 
         </LinearLayout>
 
     </LinearLayout>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="60dp"
         android:layout_marginTop="2dp"
-        android:layout_marginStart="6dp"
         android:layout_marginEnd="6dp"
-        android:layout_alignBottom="@+id/lastMessage"
-        android:background="#37000000" />
+        android:background="@color/colorAccent" />
 
-
-</LinearLayout>
+</RelativeLayout>

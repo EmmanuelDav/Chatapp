@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/Log_out"
-        android:title="Log_out"
+        android:title="Logout"
         app:showAsAction="never"/>
 
     <item
@@ -12,7 +12,6 @@
         android:title="search"
         android:icon="@drawable/ic_search_black_24dp"
         app:actionViewClass="android.widget.SearchView"
-        app:showAsAction="ifRoom"/>
-
+        app:showAsAction="never"/>
 
 </menu>

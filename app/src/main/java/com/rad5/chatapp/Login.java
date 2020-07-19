@@ -3,6 +3,7 @@ package com.rad5.chatapp;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -27,8 +28,8 @@ public class Login extends AppCompatActivity {
     FirebaseAuth auth;
     TextView mfPassword;
     FirebaseUser mFirebaseUser;
-    ProgressBar mProgressBar;
-    public static boolean isActivityRunning;
+    Dialog mProgressBar;
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -36,14 +37,8 @@ public class Login extends AppCompatActivity {
         if (mFirebaseUser!= null){
             startActivity(new Intent(this,MainActivity.class));
             finish();
-        }else {
-
-
         }
-        isActivityRunning = true;
     }
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,11 +46,8 @@ public class Login extends AppCompatActivity {
         email = findViewById(R.id.login_email);
         password = findViewById(R.id.Login_password);
         login = findViewById(R.id.Userlogin);
-        mProgressBar = findViewById(R.id.progressBar);
         mfPassword = findViewById(R.id.forgottenPassword);
         auth = FirebaseAuth.getInstance();
-
-
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -63,7 +55,7 @@ public class Login extends AppCompatActivity {
                 String Email = email.getText().toString();
                 String Password = password.getText().toString();
                 if (TextUtils.isEmpty(Email) || TextUtils.isEmpty(Password)) {
-                    Toast.makeText(getApplicationContext(), "empty email address or password", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Empty email address or password", Toast.LENGTH_LONG).show();
                     hideDialog();
                 } else {
                     auth.signInWithEmailAndPassword(Email, Password)
@@ -80,14 +72,11 @@ public class Login extends AppCompatActivity {
                                         }else {
                                             Toast.makeText(getApplicationContext(), "Please check your email to verify your account", Toast.LENGTH_SHORT).show();
                                             FirebaseAuth.getInstance().signOut();
-
                                         }
                                     } else {
                                         hideDialog();
-
-
+                                        Toast.makeText(getApplicationContext(), "Invalid Login Details", Toast.LENGTH_SHORT).show();
                                     }
-
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
                         @Override
@@ -95,9 +84,7 @@ public class Login extends AppCompatActivity {
                             Log.d("Login error", e.getMessage());
                         }
                     });
-
                 }
-
             }
         });
         mfPassword.setOnClickListener(new View.OnClickListener() {
@@ -106,29 +93,23 @@ public class Login extends AppCompatActivity {
                 startActivity(new Intent(getApplicationContext(), forgottenPassword.class));
             }
         });
-
-
     }
 
     private void showDialog() {
-        mProgressBar.setVisibility(View.VISIBLE);
-
+        mProgressBar = new Dialog(this);
+        mProgressBar.setContentView(R.layout.dialog);
+        mProgressBar.show();
     }
 
     private void hideDialog() {
-        if (mProgressBar.getVisibility() == View.VISIBLE) {
-            mProgressBar.setVisibility(View.INVISIBLE);
-        }
+        mProgressBar.dismiss();
     }
-
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        isActivityRunning = false;
     }
 
-    public void signup(View view) {
+    public void signUp(View view) {
         startActivity(new Intent(this,Register.class));
     }
 }
