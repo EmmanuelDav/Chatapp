@@ -10,61 +10,76 @@
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/tooBar"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/tooBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:minHeight="?attr/actionBarSize"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="65dp"
-            android:background="@color/white"
-            android:minHeight="?attr/actionBarSize"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+            android:layout_height="wrap_content">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/User_Image"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="20dp" />
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/User_Image"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginRight="20dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginTop="10dp" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/User_name"
+                style="@style/textStyle"
+                android:layout_marginLeft="20dp"
+                android:layout_width="wrap_content"
+                android:gravity="center"
+                android:layout_height="45dp"
+                android:layout_centerVertical="true"
+                android:textSize="18sp" />
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/User_name"
-                    style="@style/textStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="45dp"
-                    android:layout_centerVertical="true"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginLeft="33dp"
-                    android:textSize="18sp" />
-
-            </RelativeLayout>
+        </RelativeLayout>
 
 
-        </androidx.appcompat.widget.Toolbar>
+    </androidx.appcompat.widget.Toolbar>
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tablayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:theme="@style/ThemeOverlay.AppCompat.Light"
-            android:visibility="visible"
-            app:tabGravity="fill"
-            app:tabMode="fixed" />
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tablayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:theme="@style/ThemeOverlay.AppCompat.Light"
+        android:visibility="gone"
+        app:tabGravity="fill"
+        app:tabMode="fixed" />
 
-    </com.google.android.material.appbar.AppBarLayout>
+    <!--    </com.google.android.material.appbar.AppBarLayout>-->
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/Pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/appBarLayout"
-        android:visibility="visible" />
+        android:visibility="gone" />
+
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/button_nav"
+        android:layout_below="@+id/tooBar" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/button_nav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        app:menu="@menu/nav_button" />
 
 </RelativeLayout>

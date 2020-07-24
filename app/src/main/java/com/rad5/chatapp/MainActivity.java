@@ -1,15 +1,20 @@
 package com.rad5.chatapp;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
 import android.app.Dialog;
 import android.content.Intent;
 import android.net.ConnectivityManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -21,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
@@ -39,40 +45,53 @@ import com.rad5.chatapp.Models.Users;
 
 import java.util.HashMap;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
 import static android.app.SearchManager.QUERY;
+import static com.rad5.chatapp.Fragments.fragment_Chat.fragmentChatActivity;
+import static com.rad5.chatapp.Fragments.fragment_Users.fragmentUser;
+import static com.rad5.chatapp.Fragments.profileFragment.fragmentProfile;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     ImageView profilePic;
     TextView userName;
-    public static Boolean isActivityRunning;
     FirebaseUser mUser;
     DatabaseReference mDatabaseRef;
     private Dialog mDialog;
     private ImageView mNav_imageView;
-    private TextView mNav_userName;
+    public static boolean isUserFragmentVisible;
+    private TextView mNav_userName, mUserEmail;
     public static Boolean Connected;
-    private TextView mUserEmail;
     private static final String TAG = "MainActivityResults";
     UserInput mUserInput;
     private String name, resultName;
     private ViewPager mViewpager;
-    public interface UserInput { public void onSearchPressEnter(String input);}
+    private Toolbar toolbar;
+    private ActionBarDrawerToggle mToggle;
+
+
+    public interface UserInput {
+        public void onSearchPressEnter(String input);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Init();
+        setDrawable(toolbar);
+        mUser = FirebaseAuth.getInstance().getCurrentUser();
+        //isInternetConnected();
+        displayUserDataIfConnected();
+        openFragment(new fragment_Chat());
+
+    }
+
+    void Init() {
         profilePic = findViewById(R.id.User_Image);
         userName = findViewById(R.id.User_name);
-        Toolbar toolbar = findViewById(R.id.tooBar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        mUser = FirebaseAuth.getInstance().getCurrentUser();
-        setNavigationDrawer();
+        toolbar = findViewById(R.id.tooBar);
         mViewpager = findViewById(R.id.Pager);
+        setNavigationForAll();
         getCurrentUserEmail(mUserEmail);
-        isInternetConnected();
     }
 
 
@@ -100,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
                 TabLayout layout = findViewById(R.id.tablayout);
                 layout.setupWithViewPager(mViewpager);
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
@@ -130,6 +150,7 @@ public class MainActivity extends AppCompatActivity {
                             into(mNav_imageView);
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.d("Database error", databaseError.getMessage());
@@ -152,11 +173,11 @@ public class MainActivity extends AppCompatActivity {
                 Boolean isConnected = snapshot.getValue(Boolean.class);
                 if (isConnected) {
                     Connected = true;
-                    displayUserDataIfConnected();
-                    displayNumOfUnreadMessagesInConnected(mViewpager);
+
+                    //displayNumOfUnreadMessagesInConnected(mViewpager);
                     Toast.makeText(getApplicationContext(), "Internet Connected", Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(getApplicationContext(), "No Internet", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "", Toast.LENGTH_LONG).show();
                     Connected = false;
                 }
                 Log.d(TAG, "InternetConnection  " + (Connected));
@@ -205,6 +226,7 @@ public class MainActivity extends AppCompatActivity {
                 mUserInput.onSearchPressEnter(s);
                 return false;
             }
+
             @Override
             public boolean onQueryTextChange(String s) {
                 return false;
@@ -213,16 +235,6 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.Log_out:
-                FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(getApplicationContext(),
-                        Login.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
-        }
-        return false;
-    }
 
     public void status(String status) {
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("Users").child(mUser.getUid());
@@ -236,61 +248,44 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         status("offline");
     }
-
     @Override
     protected void onResume() {
         super.onResume();
         status("online");
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        isActivityRunning = true;
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        isActivityRunning = false;
-    }
-
-    private String getMessages(String text) {
-        Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG).show();
-        return text;
-    }
-
-    private void setNavigationDrawer() {
-        final DrawerLayout drawerLayout = findViewById(R.id.drawerlayout);
+    private void setNavigationForAll() {
         NavigationView nView = findViewById(R.id.navigationView);
         View header = nView.getHeaderView(0);
         mNav_imageView = header.findViewById(R.id.nav_userImage);
         mNav_userName = header.findViewById(R.id.nav_userName);
         mUserEmail = header.findViewById(R.id.nav_userEmail);
-        nView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    case R.id.nav_profile:
-                        getMessages("Import your own action");
-                        menuItem.setChecked(true);
-                        drawerLayout.closeDrawers();
-                        return true;
-                    case R.id.nav_setting:
-                        getMessages("Import your own action for setting");
-                        drawerLayout.closeDrawers();
-                        menuItem.setChecked(true);
-                        return true;
-                    case R.id.nav_share:
-                        menuItem.setChecked(true);
-                        getMessages("Import your own Action for share");
-                        drawerLayout.closeDrawers();
-                        return true;
-                }
-                return false;
-            }
-        });
+        nView.setNavigationItemSelectedListener(this);
+        BottomNavigationView sBottomNavigationView = findViewById(R.id.button_nav);
+        sBottomNavigationView.setOnNavigationItemSelectedListener(navigationButton);
     }
+
+    BottomNavigationView.OnNavigationItemSelectedListener navigationButton = new BottomNavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem pMenuItem) {
+            switch (pMenuItem.getItemId()) {
+                case R.id.butt_home:
+                    if (fragmentChatActivity == false) {
+                        openFragment(new fragment_Chat());
+                    }
+                    pMenuItem.setChecked(true);
+                    break;
+                case R.id.butt_prof:
+                    if (fragmentProfile == false) {
+                        openFragment(new profileFragment());
+                    }
+                    pMenuItem.setChecked(true);
+                    break;
+            }
+            return false;
+        }
+    };
+
 
     private void getCurrentUserEmail(TextView email) {
         mUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -299,6 +294,7 @@ public class MainActivity extends AppCompatActivity {
             email.setText(userEmail);
         }
     }
+
     @Override
     public void onAttachFragment(@NonNull Fragment fragment) {
         super.onAttachFragment(fragment);
@@ -308,5 +304,59 @@ public class MainActivity extends AppCompatActivity {
         } catch (ClassCastException e) {
             Log.d(TAG, e + " m  error found");
         }
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem pMenuItem) {
+        DrawerLayout sDrawerLayout = findViewById(R.id.drawerlayout);
+        switch (pMenuItem.getItemId()) {
+            case R.id.findPeople:
+                if (fragmentUser == false) {
+                    openFragment(new fragment_Users());
+                }
+                sDrawerLayout.closeDrawers();
+                pMenuItem.setChecked(true);
+                break;
+            case R.id.contact_us:
+                Toast.makeText(this, "Clicked contact us", Toast.LENGTH_LONG).show();
+                sDrawerLayout.closeDrawers();
+                pMenuItem.setChecked(true);
+                break;
+            case R.id.nav_notif:
+                Toast.makeText(this, "Clicked Notification", Toast.LENGTH_LONG).show();
+                sDrawerLayout.closeDrawers();
+                pMenuItem.setChecked(true);
+                break;
+            case R.id.LogOut:
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(this, Login.class));
+                finish();
+                break;
+        }
+        return false;
+    }
+
+
+    private void openFragment(Fragment sFragment) {
+        Log.d(TAG, "!Chat  Fragment visibility = " + fragmentChatActivity);
+        Log.d(TAG, "!User Fragment visibility = " + fragmentUser);
+        Log.d(TAG, "!Profile Fragment visibility = " + fragmentProfile);
+        String backStateName = sFragment.getClass().getName();
+        FragmentManager sFragmentManager = getSupportFragmentManager();
+        boolean fragmentInBack = sFragmentManager.popBackStackImmediate(backStateName, 0);
+        if (!fragmentInBack) {
+            FragmentTransaction sFragmentTransaction = sFragmentManager.beginTransaction();
+            sFragmentTransaction.replace(R.id.frameLayout, sFragment);
+            sFragmentTransaction.addToBackStack(backStateName);
+            sFragmentTransaction.commit();
+        }
+    }
+
+    private void setDrawable(Toolbar pToolbar) {
+        setSupportActionBar(pToolbar);
+        DrawerLayout nDrawerLayout = findViewById(R.id.drawerlayout);
+        mToggle = new ActionBarDrawerToggle(this, nDrawerLayout, pToolbar, R.string.open, R.string.close);
+        nDrawerLayout.addDrawerListener(mToggle);
+        mToggle.syncState();
     }
 }

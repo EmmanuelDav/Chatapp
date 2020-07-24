@@ -22,7 +22,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.rad5.chatapp.FCM.Data;
 import com.rad5.chatapp.FCM.FCM;
@@ -30,6 +29,7 @@ import com.rad5.chatapp.FCM.FirebaseMessage;
 import com.rad5.chatapp.Models.Chats;
 import com.rad5.chatapp.Models.Users;
 import com.rad5.chatapp.Adapters.MessageAdapter;
+import com.rad5.chatapp.Utils.SpaceRemoval;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -100,7 +100,7 @@ public class MessageActivity extends AppCompatActivity {
                 if (!user.getImageUrl().equals("default")) {
                     Glide.with(getApplicationContext()).load(user.getImageUrl()).into(mImageView);
                 } else {
-                    mImageView.setImageResource(R.drawable.ic_action_name);
+                    mImageView.setImageResource(R.drawable.profile_white);
                 }
                 readMessages(fuser.getUid(), mUserId, user.getImageUrl());
             }
@@ -115,8 +115,8 @@ public class MessageActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String sms = editText.getText().toString();
-                if (sms.isEmpty() || sms.equals(" ")) {
-                    Toast.makeText(getApplicationContext(), "no message to send", Toast.LENGTH_LONG).show();
+                if (SpaceRemoval.CheckSpace(sms)) {
+                    editText.setText("");
                 } else {
                     sendmessage(fuser.getUid(), mUserId, sms);
                     sendNotifictionmessagetoUser(sms, username);
@@ -133,15 +133,10 @@ public class MessageActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        isActivityRunning = true;
+
         getUsernmae();
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        isActivityRunning = false;
-    }
 
     public void sendNotifictionmessagetoUser(String mms, String id) {
         Log.d(TAG, "creating retrofit for notification_message");

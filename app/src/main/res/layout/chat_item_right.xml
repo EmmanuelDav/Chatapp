@@ -21,18 +21,19 @@
             android:id="@+id/b"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/colorPrimary"
+            android:backgroundTint="@color/light_gray"
             android:layout_alignParentRight="true"
-            android:background="@drawable/chat_bubble_sending"
+
+            android:background="@drawable/button_shape"
             android:orientation="vertical">
 
 
             <TextView
                 android:id="@+id/show_message"
                 android:layout_width="wrap_content"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
                 android:layout_gravity="start"
-                android:layout_marginEnd="9dp"
+                android:gravity="center"
                 style="@style/textStyle"
                 android:padding="5dp"
                 android:text="Heavrn is my home"
@@ -43,7 +44,7 @@
         <TextView
             android:id="@+id/SeenMessage"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/b"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="4dp"

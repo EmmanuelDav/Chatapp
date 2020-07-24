@@ -55,13 +55,12 @@ public class profileFragment extends Fragment {
     FirebaseUser fuser;
     DatabaseReference mReference;
     StorageReference mStorageReference;
+    public static boolean fragmentProfile = false;
     private static final int Image_request = 1;
     private Uri imageuri;
     private StorageTask uploadtask;
 
-
     public profileFragment() {
-        // Required empty public constructor
     }
 
 
@@ -75,7 +74,6 @@ public class profileFragment extends Fragment {
         fuser = FirebaseAuth.getInstance().getCurrentUser();
         mReference = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
         mStorageReference = FirebaseStorage.getInstance().getReference("Uploads");
-
         mReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -86,7 +84,6 @@ public class profileFragment extends Fragment {
                 } else {
                     Glide.with(mActivity).load(users.getImageUrl()).into(mProfilepix);
                 }
-
             }
 
             @Override
@@ -94,8 +91,6 @@ public class profileFragment extends Fragment {
 
             }
         });
-
-
         mProfilepix.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -104,6 +99,7 @@ public class profileFragment extends Fragment {
         });
         return view;
     }
+
     private Activity mActivity;
 
     @Override
@@ -184,10 +180,22 @@ public class profileFragment extends Fragment {
 
             if (uploadtask != null && uploadtask.isInProgress()) {
                 Toast.makeText(getContext(), "Uploading in progress", Toast.LENGTH_LONG).show();
-            }else {
+            } else {
                 uploadImage();
             }
 
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        fragmentProfile = false;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        fragmentProfile = true;
     }
 }

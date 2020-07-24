@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:backgroundTint="@color/white"
+    android:orientation="vertical"
+    android:padding="10dp"
     tools:context=".Fragments.fragment_Chat">
 
-    <!-- TODO: Update blank fragment layout -->
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="wrap_content"
+        android:text="Users"
+        style="@style/textStyle"
+        android:padding="15dp"
+        android:textSize="18sp"
+        android:layout_height="wrap_content"/>
 
 
     <androidx.recyclerview.widget.RecyclerView
@@ -14,4 +23,4 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-</RelativeLayout>
+</androidx.appcompat.widget.LinearLayoutCompat>

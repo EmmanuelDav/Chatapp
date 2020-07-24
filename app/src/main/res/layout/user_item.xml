@@ -33,14 +33,13 @@
             <ImageView
                 android:id="@+id/img_on"
                 android:layout_width="10dp"
-                android:layout_height="15dp"
+                android:layout_height="10dp"
                 android:layout_alignBottom="@+id/profile_pix"
                 android:layout_gravity="center"
                 android:layout_marginStart="40dp"
                 android:background="#16F703"
                 android:scaleType="center"
-                android:visibility="visible" />
-
+                android:visibility="invisible" />
 
             <ImageView
                 android:id="@+id/img_off"

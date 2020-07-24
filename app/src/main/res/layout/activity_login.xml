@@ -60,9 +60,10 @@
             style="@style/EdithText"
             android:layout_width="match_parent"
             android:layout_height="50dp"
+            android:backgroundTint="@color/light_gray"
             android:layout_above="@+id/Login_password"
             android:ems="10"
-            android:hint="Email Address"
+            android:hint="  Email Address"
             android:inputType="textEmailAddress"
             android:padding="5dp" />
 
@@ -73,7 +74,8 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_above="@+id/forgottenPassword"
-            android:hint="Password"
+            android:hint="  Password"
+            android:backgroundTint="@color/light_gray"
             android:inputType="text"
             android:padding="5dp" />
 

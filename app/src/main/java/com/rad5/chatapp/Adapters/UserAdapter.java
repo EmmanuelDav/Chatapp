@@ -87,8 +87,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.Viewholder> {
                 mContext.startActivity(intent);
             }
         });
-
-
     }
 
     @Override
@@ -109,7 +107,6 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.Viewholder> {
             img_off = itemView.findViewById(R.id.img_off);
             img_on = itemView.findViewById(R.id.img_on);
             lastMessage = itemView.findViewById(R.id.lastMessage);
-
         }
     }
 

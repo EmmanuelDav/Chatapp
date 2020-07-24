@@ -36,9 +36,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         this.chats = chats;
         this.context = context;
         this.imageurl = imageurl;
-
     }
-
 
     FirebaseUser fuser;
 
@@ -52,7 +50,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             View view = LayoutInflater.from(context).inflate(R.layout.chat_item_left, parent, false);
             return new ViewHolder(view);
         }
-
     }
 
     @Override
@@ -61,7 +58,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         holder.show_message.setText(mchat.getMessage());
        // Log.d("usermessage",mchat.getMessage());
         if (imageurl.equals("default")){
-            holder.prof_pix.setImageResource(R.drawable.ic_action_name);
+            holder.prof_pix.setImageResource(R.drawable.profile_white);
         }else {
             Glide.with(context).load(imageurl).into(holder.prof_pix);
         }

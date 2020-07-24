@@ -5,5 +5,7 @@
     <string name="email">Email:</string>
     <string name="username">Username</string>
     <string name="welcome">Welcome</string>
+    <string name="open">Open</string>
+    <string name="close">Closed</string>
     <string name="clientID">766054288442-6jhivgulnj0q10c3tqstf0sav6m994gk.apps.googleusercontent.com</string>
 </resources>

@@ -5,11 +5,7 @@
         android:id="@+id/header"
         android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_profile"
-            android:icon="@drawable/profile"
-            android:title="Profile" />
-        <item
-            android:id="@+id/nav_share"
+            android:id="@+id/nav_notif"
             android:icon="@drawable/notification"
             android:title="Notification" />
         <item
@@ -18,16 +14,15 @@
             android:title="Find Friends" />
 
         <item
-            android:id="@+id/nav_setting"
-            android:icon="@drawable/sett"
-            android:title="Setting" />
+            android:id="@+id/contact_us"
+            android:icon="@drawable/contact_us"
+            android:title="Contact Us" />
 
     </group>
 
     <group
-        android:id="@+id/Systemheader"
+        android:id="@+id/systemHeader"
         android:checkableBehavior="single">
-
         <item
             android:id="@+id/LogOut"
             android:icon="@drawable/exit"

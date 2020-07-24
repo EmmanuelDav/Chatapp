@@ -16,8 +16,7 @@
             android:id="@+id/tooBarl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/colorPrimaryDark"
-
+            android:backgroundTint="@color/colorPrimary"
             android:minHeight="?attr/actionBarSize"
             android:theme="@style/Theme.AppCompat.DayNight.DarkActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
@@ -29,20 +28,20 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginRight="9dp"
                     android:layout_gravity="center_vertical"
-                    android:src="@drawable/ic_arrow_back_black_24dp" />
+                    android:src="@drawable/send_white" />
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/User_Images"
                     android:layout_width="40dp"
+                    android:src="@drawable/profile_white"
                     android:layout_height="40dp"
                     android:layout_gravity="center_vertical"
                     android:layout_marginEnd="0dp"
-                    android:layout_marginRight="0dp"
-                    app:civ_border_color="#FF000000"
-                    app:civ_border_width="2dp" />
+                    android:layout_marginRight="0dp" />
 
 
             </LinearLayout>
@@ -53,6 +52,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="33dp"
+                android:textColor="@color/colorWhite"
                 android:textSize="20sp" />
 
         </androidx.appcompat.widget.Toolbar>
@@ -73,17 +73,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="#FBFCFC"
+        android:background="@color/white"
         android:padding="5dp">
 
         <EditText
             android:id="@+id/chat_text"
             style="@style/EdithText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
+            android:inputType="text"
+            android:layout_margin="10dp"
             android:layout_centerVertical="true"
+            android:backgroundTint="@color/light_gray"
             android:layout_toLeftOf="@+id/btn_send"
-            android:backgroundTint="@color/colorPrimaryDark"
+            android:background="@drawable/button_shape"
             android:hint="  Typing a Message" />
 
         <ImageButton
@@ -93,7 +96,7 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:background="@drawable/ic_send_black_24dp"
+            android:background="@drawable/send"
             android:tint="@color/colorAccent" />
     </RelativeLayout>
 

@@ -22,7 +22,7 @@
         android:layout_marginLeft="30dp"
         android:layout_marginTop="30dp"
         android:id="@+id/navCard"
-        app:cardCornerRadius="30dp"
+        app:cardCornerRadius="40dp"
         android:background="@color/white">
 
         <ImageView

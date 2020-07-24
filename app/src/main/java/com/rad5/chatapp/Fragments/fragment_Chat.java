@@ -55,18 +55,14 @@ import static com.rad5.chatapp.MainActivity.Connected;
  * A simple {@link Fragment} subclass.
  */
 public class fragment_Chat extends Fragment implements MainActivity.UserInput {
-
     private RecyclerView mRecyclerView;
-
     private List<Users> mUsers;
     FirebaseUser mFirebaseUser;
     private List<Chatlist> mList;
     private static final String TAG = "fragmentChatActivity";
+    public static boolean fragmentChatActivity = false;
     private DatabaseReference mReference;
     private UserAdapter mUserAdapter;
-    private Toolbar mToolbar;
-    private Boolean connected ;
-
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -79,27 +75,22 @@ public class fragment_Chat extends Fragment implements MainActivity.UserInput {
         }
     };
 
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         IntentFilter filter = new IntentFilter();
         filter.addAction(QUERY);
-       // getContext().registerReceiver(mBroadcastReceiver, filter);
-        Log.d(TAG, "Internet Connection "+ Connected);
-        connected = Connected;
+        // getContext().registerReceiver(mBroadcastReceiver, filter);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_users_fragment, container, false);
+        View v = inflater.inflate(R.layout.fragment_chat_fragment, container, false);
         IntentFilter filter = new IntentFilter();
         filter.addAction(QUERY);
         getContext().registerReceiver(mBroadcastReceiver, filter);
-        mRecyclerView = v.findViewById(R.id.recyclerview);
-        mToolbar = v.findViewById(R.id.tooBar);
-        getActivity().getActionBar();
+        mRecyclerView = v.findViewById(R.id.RecyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(layoutManager);
@@ -122,11 +113,8 @@ public class fragment_Chat extends Fragment implements MainActivity.UserInput {
             }
         });
         sendTokenToFirebase();
-
         return v;
     }
-
-
     private void sendTokenToFirebase() {
         FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         final DatabaseReference refrence = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
@@ -172,7 +160,6 @@ public class fragment_Chat extends Fragment implements MainActivity.UserInput {
 
     }
 
-
     public void filterSearch(String SearchInput) {
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         Query query = FirebaseDatabase.getInstance().getReference("Users")
@@ -201,13 +188,21 @@ public class fragment_Chat extends Fragment implements MainActivity.UserInput {
         });
     }
 
-
     @Override
     public void onSearchPressEnter(String input) {
         Log.d(TAG, "    " + input);
         filterSearch(input);
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        fragmentChatActivity = false;
+    }
 
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        fragmentChatActivity = true;
+    }
 }

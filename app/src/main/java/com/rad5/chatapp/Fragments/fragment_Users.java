@@ -37,6 +37,8 @@ import com.rad5.chatapp.Adapters.UserAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.rad5.chatapp.MainActivity.isUserFragmentVisible;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -47,15 +49,16 @@ public class fragment_Users extends Fragment implements MainActivity.UserInput {
     FirebaseUser mfirebaseUser;
     DatabaseReference mDatabaseRefrence;
     UserAdapter mUserAdapter;
-    public fragment_Users() {}
+    public static boolean fragmentUser = false;
+    public fragment_Users(){}
 
     RecyclerView mRecyclerview;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_chat_fragment, container, false);
-        mRecyclerview = view.findViewById(R.id.RecyclerView);
+        View view = inflater.inflate(R.layout.fragment_users_fragment, container, false);
+        mRecyclerview = view.findViewById(R.id.recyclerview);
         mRecyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
         mDatabaseRefrence = FirebaseDatabase.getInstance().getReference("Users");
         mfirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -63,7 +66,6 @@ public class fragment_Users extends Fragment implements MainActivity.UserInput {
         getUsers();
         return view;
     }
-
     private void searchInput(String s) {
         mfirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         Query mQuary = FirebaseDatabase.getInstance().getReference("Users").orderByChild("Username")
@@ -116,5 +118,17 @@ public class fragment_Users extends Fragment implements MainActivity.UserInput {
                 Log.d("displayerror", databaseError.getMessage());
             }
         });
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        fragmentUser = false;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        fragmentUser = true;
     }
 }
