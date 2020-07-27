@@ -1,7 +1,6 @@
 package com.rad5.chatapp;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -9,12 +8,13 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.preference.PreferenceManager;
 import androidx.viewpager.widget.ViewPager;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -44,11 +44,13 @@ import com.rad5.chatapp.Models.Chats;
 import com.rad5.chatapp.Models.Users;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 import static android.app.SearchManager.QUERY;
 import static com.rad5.chatapp.Fragments.fragment_Chat.fragmentChatActivity;
 import static com.rad5.chatapp.Fragments.fragment_Users.fragmentUser;
 import static com.rad5.chatapp.Fragments.profileFragment.fragmentProfile;
+import static com.rad5.chatapp.SettingsFragment.Key_Pref_Example_Switch;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     ImageView profilePic;
@@ -68,21 +70,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ActionBarDrawerToggle mToggle;
 
 
-    public interface UserInput {
-        public void onSearchPressEnter(String input);
-    }
+    public interface UserInput {public void onSearchPressEnter(String input);}
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Init();
+        SharedPreferences sSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean switchPref = sSharedPreferences.getBoolean(Key_Pref_Example_Switch, false);
+        Toast.makeText(this, Boolean.toString(switchPref), Toast.LENGTH_LONG).show();
         setDrawable(toolbar);
         mUser = FirebaseAuth.getInstance().getCurrentUser();
         //isInternetConnected();
         displayUserDataIfConnected();
         openFragment(new fragment_Chat());
-
     }
 
     void Init() {
@@ -127,6 +129,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
+
+
     private void displayUserDataIfConnected() {
         ProgressDialog();
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("Users").child(mUser.getUid());
@@ -150,7 +154,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             into(mNav_imageView);
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.d("Database error", databaseError.getMessage());
@@ -173,7 +176,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Boolean isConnected = snapshot.getValue(Boolean.class);
                 if (isConnected) {
                     Connected = true;
-
                     //displayNumOfUnreadMessagesInConnected(mViewpager);
                     Toast.makeText(getApplicationContext(), "Internet Connected", Toast.LENGTH_LONG).show();
                 } else {
@@ -209,11 +211,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         return false;
     }
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.value, menu);
+        getMenuInflater().inflate(R.menu.menu, menu);
         MenuItem search = menu.findItem(R.id.usersSearch);
         SearchView mSearchView = (SearchView) search.getActionView();
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -226,7 +226,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 mUserInput.onSearchPressEnter(s);
                 return false;
             }
-
             @Override
             public boolean onQueryTextChange(String s) {
                 return false;
@@ -234,15 +233,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
         return true;
     }
-
-
     public void status(String status) {
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("Users").child(mUser.getUid());
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("status", status);
         mDatabaseRef.updateChildren(hashMap);
     }
-
     @Override
     protected void onPause() {
         super.onPause();
@@ -252,6 +248,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onResume() {
         super.onResume();
         status("online");
+        SharedPreferences sSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean switchPref = sSharedPreferences.getBoolean(Key_Pref_Example_Switch, false);
+        Toast.makeText(this, Boolean.toString(switchPref), Toast.LENGTH_LONG).show();
     }
 
     private void setNavigationForAll() {
@@ -327,7 +326,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 sDrawerLayout.closeDrawers();
                 pMenuItem.setChecked(true);
                 break;
-            case R.id.LogOut:
+            case R.id.logout:
                 FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(this, Login.class));
                 finish();
@@ -337,15 +336,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
-    private void openFragment(Fragment sFragment) {
+    public  void openFragment(Fragment sFragment) {
         Log.d(TAG, "!Chat  Fragment visibility = " + fragmentChatActivity);
         Log.d(TAG, "!User Fragment visibility = " + fragmentUser);
         Log.d(TAG, "!Profile Fragment visibility = " + fragmentProfile);
         String backStateName = sFragment.getClass().getName();
-        FragmentManager sFragmentManager = getSupportFragmentManager();
-        boolean fragmentInBack = sFragmentManager.popBackStackImmediate(backStateName, 0);
+        boolean fragmentInBack = getSupportFragmentManager().popBackStackImmediate(backStateName, 0);
         if (!fragmentInBack) {
-            FragmentTransaction sFragmentTransaction = sFragmentManager.beginTransaction();
+            FragmentTransaction sFragmentTransaction =  getSupportFragmentManager().beginTransaction();
             sFragmentTransaction.replace(R.id.frameLayout, sFragment);
             sFragmentTransaction.addToBackStack(backStateName);
             sFragmentTransaction.commit();
@@ -358,5 +356,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mToggle = new ActionBarDrawerToggle(this, nDrawerLayout, pToolbar, R.string.open, R.string.close);
         nDrawerLayout.addDrawerListener(mToggle);
         mToggle.syncState();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.setting:
+                startActivity(new Intent(this,Settings.class));
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

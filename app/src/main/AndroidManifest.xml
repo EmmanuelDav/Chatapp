@@ -4,7 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
@@ -14,7 +14,8 @@
         android:roundIcon="@mipmap/chaticon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".forgottenPassword"></activity>
+        <activity android:name=".Settings"></activity>
+        <activity android:name=".forgottenPassword" />
         <activity android:name=".MessageActivity" />
         <activity android:name=".Register" />
         <activity
@@ -27,6 +28,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <service
             android:name=".Notification.FirebaseMessageService"
             android:permission="com.google.android.c2dm.permission.SEND">
@@ -36,4 +38,5 @@
             </intent-filter>
         </service>
     </application>
+
 </manifest>

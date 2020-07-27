@@ -10,12 +10,12 @@
             android:title="Notification" />
         <item
             android:id="@+id/findPeople"
-            android:icon="@drawable/pro_user"
+            android:icon="@drawable/contact_us"
             android:title="Find Friends" />
 
         <item
             android:id="@+id/contact_us"
-            android:icon="@drawable/contact_us"
+            android:icon="@drawable/ic_baseline_local_phone_24"
             android:title="Contact Us" />
 
     </group>
@@ -23,10 +23,18 @@
     <group
         android:id="@+id/systemHeader"
         android:checkableBehavior="single">
+
+
         <item
-            android:id="@+id/LogOut"
+            android:id="@+id/setting"
+            android:icon="@drawable/settings"
+            android:title="Settings" />
+
+        <item
+            android:id="@+id/logout"
             android:icon="@drawable/exit"
             android:title="Logout" />
+
     </group>
 
 </menu>
