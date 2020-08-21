@@ -17,6 +17,7 @@ import com.rad5.chatapp.MainActivity;
 import com.rad5.chatapp.MessageActivity;
 import com.rad5.chatapp.R;
 import com.rad5.chatapp.Register;
+import com.rad5.chatapp.Utils.ChannelId;
 
 import java.util.Map;
 
@@ -25,6 +26,7 @@ public class FirebaseMessageService extends com.google.firebase.messaging.Fireba
 
     private static final String TAG = "FirebaseMess";
     private static final int BROADCAST_NOTIFICATION_ID = 1;
+    private static  final String mNotificationId=  "app_notification_channel";
 
     @Override
     public void onNewToken(@NonNull String s) {
@@ -43,7 +45,7 @@ public class FirebaseMessageService extends com.google.firebase.messaging.Fireba
 
     private void sendBroadcastNotification(String title, String message) {
         Log.d(TAG, "sendBroadcastNotification: building an admin broadcast notification");
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "NotificationId");
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, ChannelId.CHANNEL_ID);
         Intent notifyIntent = new Intent(this, MessageActivity.class);
         notifyIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent notifyPendingIntent =
